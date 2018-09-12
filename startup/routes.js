@@ -2,7 +2,7 @@ const compression = require('compression');
 const paginate = require('express-paginate');
 
 const users = require('../api/v1/routes/users');
-const logins = require('../api/v1/routes/logins');
+const login = require('../api/v1/routes/login');
 const notFound = require('../api/v1/routes/notFound');
 const errorHandler = require('../middleware/errorHandler');
 const logHandler = require('../middleware/logHandler');
@@ -21,7 +21,7 @@ module.exports = (app) => {
   app.use(corsMiddleware);
   app.use(new RateLimiter(15, 100).limiter);
   app.use(translatorMiddleware);
-  app.use('/api/v1/logins', logins);
+  app.use('/api/v1/login', login);
   app.use(paginate.middleware(10, 50));
   app.use(isAuthorized);
   app.use(new RateLimiter(15, 100).limiter);
