@@ -1,29 +1,20 @@
-const mongoose = require('mongoose');
+const mysql = require('mysql2/promise');
+
 const { logger } = require('./logger');
-const loggerControl = require('../util/LoggersControl/loggerControl')();
 
-
-const URL = `${process.env.DB_TYPE}://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
-
-mongoose.connect(URL, { useNewUrlParser: true });
-mongoose.Promise = global.Promise;
-const db = mongoose.connection;
-
-db.on('error', () => {
-  if (loggerControl) {
-    logger.info('Unable to connect to Database...');
+module.exports = async function db() {
+  try {
+    const connection = await mysql.createConnection({
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+    });
+    logger.info('connected to database...');
+    return connection;
+  } catch (error) {
+    logger.error(JSON.stringify(error));
+    return false;
   }
-});
-
-db.on('open', () => {
-  if (loggerControl) {
-    logger.info('Connected to Database...');
-  }
-});
-
-mongoose.set('useFindAndModify', false);
-mongoose.set('useCreateIndex', true);
-
-module.exports = {
-  mongoose,
 };
