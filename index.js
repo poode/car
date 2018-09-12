@@ -1,32 +1,43 @@
+const express = require('express');
 const cluster = require('cluster');
 const os = require('os');
 require('dotenv').config();
-const { server } = require('./server.js');
 
-function forkCPUs(server) {
+const { logger } = require('./config/logger');
+
+const app = express();
+app.use(express.json());
+
+require('./config/db')();
+require('./startup/routes')(app);
+
+function server(port) {
+  app.listen(port, () => logger.info(`Listening on port ${port}...`));
+}
+
+function forkCPUs(operatinServer) {
   const CPUS = os.cpus();
   if (cluster.isMaster) {
     CPUS.forEach(() => {
       cluster.fork();
     });
     cluster.on('listening', (worker) => {
-    // console.log('Cluster %d connected', worker.process.pid);
+      logger.info(`Cluster ${worker.process.pid} connected`);
     });
     cluster.on('disconnect', (worker) => {
-    // console.log('Cluster %d disconnected', worker.process.pid);
+      logger.info(`Cluster ${worker.process.pid} disconnected`);
     });
     cluster.on('exit', (worker) => {
-    // console.log('Cluster %d is dead', worker.process.pid);
-    // Ensuring a new cluster will start if an old one dies
+      logger.info(`Cluster ${worker.process.pid} is dead`);
+      // Ensuring a new cluster will start if an old one dies
       cluster.fork();
     });
   } else {
-    server(process.env.PORT);
+    operatinServer(Number(process.env.PORT));
   }
 }
-
 if (process.env.NODE_ENV === 'production') {
   forkCPUs(server);
 } else {
-  server(process.env.PORT);
+  server(Number(process.env.PORT));
 }
