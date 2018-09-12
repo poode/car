@@ -3,3 +3,5 @@ error.log
 exceptions.log
 .snyk
 API-Documentation.yml
+.desktopfolder
+combined.log
