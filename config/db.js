@@ -14,7 +14,7 @@ module.exports = async function db() {
     logger.info('connected to database...');
     return connection;
   } catch (error) {
-    logger.error(JSON.stringify(error));
+    logger.error(`unable to connect to database... error: ${JSON.stringify(error)}`);
     return false;
   }
 };
