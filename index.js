@@ -4,12 +4,12 @@ const os = require('os');
 require('dotenv').config();
 
 const { logger } = require('./config/logger');
+const db = require('./config/db');
 
 const app = express();
 app.use(express.json());
 
-require('./config/db')();
-require('./startup/routes')(app);
+require('./startup/routes')(app, db);
 
 function server(port) {
   app.listen(port, () => logger.info(`Listening on port ${port}...`));
