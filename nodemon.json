@@ -1,0 +1,5 @@
+{
+  "verbose": false,
+  "ext": "js,json,mjs,yaml,yml",
+  "delay": "2500"
+}
