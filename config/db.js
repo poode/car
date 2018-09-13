@@ -2,7 +2,7 @@ const mysql = require('mysql2/promise');
 
 const { logger } = require('./logger');
 
-module.exports = async function db() {
+async function db() {
   try {
     const connection = await mysql.createConnection({
       host: process.env.DB_HOST,
@@ -17,4 +17,13 @@ module.exports = async function db() {
     logger.error(`unable to connect to database... error: ${JSON.stringify(error)}`);
     return false;
   }
-};
+}
+
+module.exports = (async () => {
+  try {
+    const connection = await db();
+    return connection;
+  } catch (error) {
+    return error;
+  }
+})();
