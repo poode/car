@@ -1,17 +1,9 @@
 const _ = require('lodash');
-const Joi = require('joi');
+const validate = require('../../../util/helpers/validation');
 
 const { pagination } = require('../../../util/PaginationUtil/pagination');
-const { validateUser, JoiUserSchema, bcryptPassword } = require('../../../services/user.service');
-const { User } = require('../models/user');
-
-
-function validateEmail(email) {
-  const JoiEmailSchema = {
-    email: Joi.string().email().required(),
-  };
-  return Joi.validate({ email }, JoiEmailSchema);
-}
+const { validateUser, JoiUserSchema } = require('../../../services/user.service');
+const { jsonUserSchema, db } = require('../models/user');
 
 class UserController {
   /**
@@ -20,16 +12,8 @@ class UserController {
    * @param validationSchema JoiSchema
    * @param DBModel model
    */
-  constructor(validation, JoiSchema, model) {
-    if (validation && JoiSchema && model) {
-      this.validation = validation;
-      this.JoiSchema = JoiSchema;
-      this.model = model;
-    } else {
-      this.validation = validateUser;
-      this.JoiSchema = JoiUserSchema;
-      this.model = User;
-    }
+  constructor() {
+    this.db = db;
   }
 
   async index(req, res) {
@@ -60,20 +44,16 @@ class UserController {
     return res.json(_.pick(user, ['_id', 'name', 'email']));
   }
 
-  async create(req, res) {
-    const { error } = this.validation(req.body);
-    if (error) return res.status('400').send(error.details[0].message);
-
-    let user = await User.findOne({ email: req.body.email });
-    if (!user) {
-      return res.status(304).send(`The Email ${req.body.email} is already registered`);
-    }
-
-    user = new User(_.pick(req.body, ['name', 'email']));
-    user.password = await bcryptPassword(req.body.password);
-
-    await user.save();
-    return res.status('201').json(_.pick(user, ['_id', 'name', 'email']));
+  async create(req, res, next) {
+    console.log(jsonUserSchema);
+    const { errors } = await validate(jsonUserSchema, req.body);
+    if (errors) return next(errors);
+    const conn = this.db(res);
+    const row = await conn
+      .execute('INSERT INTO users (username, password, mobile) VALUES (? , ?, ?)',
+        [req.body.username, req.body.password, req.body.mobile]);
+    console.log('row ', row[0].insertId);
+    return res.json();
   }
 }
 
