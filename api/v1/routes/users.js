@@ -8,7 +8,7 @@ router.get('/usersList', UserController.getLimited.bind(UserController));
 
 router.get('/:email', UserController.getUser.bind(UserController));
 
-router.post('/', UserController.create.bind(UserController));
+router.post('/register', UserController.create.bind(UserController));
 
 // router.put('/:id', UserController.update.bind(UserController));
 

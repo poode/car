@@ -1,41 +1,45 @@
-const userSchema = {
-  type: 'object',
-  required: ['username', 'mobile', 'password'],
-  properties: {
-    username: {
-      type: 'string',
-      minlength: 5,
-      maxlength: 255,
+const Sequelize = require('sequelize');
+
+const { db } = require('../../../config/db');
+
+function userModel(sequelize, dataType) {
+  return sequelize.define('users', {
+    id: {
+      type: dataType.INTEGER,
     },
-    mobile: {
-      type: 'number',
-      minlength: 12,
-      maxlength: 12,
-      unique: true,
+    username: {
+      type: dataType.STRING,
+      allowNull: false,
+      trim: true,
     },
     email: {
-      type: 'string',
-      maxlength: 255,
+      notEmpty: true,
+      allowNull: true,
+      trim: true,
+      type: dataType.STRING,
+    },
+    mobile: {
+      type: dataType.STRING,
+      allowNull: false,
+      trim: true,
+      unique: true,
+      primaryKey: true,
     },
     password: {
-      type: 'string',
-      minlength: 8,
-      maxlength: 255,
+      type: dataType.STRING,
+      trim: true,
+      allowNull: false,
     },
-    userType_id: {
-      type: 'integer',
-      maxlength: 255,
+    verified: {
+      type: dataType.BOOLEAN,
+      trim: true,
     },
-  },
-};
 
-const jsonUserSchema = JSON.stringify(userSchema);
-
-function db(res) {
-  return res.locals.dbConn;
+  });
 }
 
+const User = userModel(db, Sequelize);
+
 module.exports = {
-  jsonUserSchema,
-  db,
+  User,
 };
