@@ -21,13 +21,13 @@ function forkCPUs(operatingServer) {
       cluster.fork();
     });
     cluster.on('listening', (worker) => {
-      logger.info(`Cluster ${worker.process.pid} connected`);
+      // logger.info(`Cluster ${worker.process.pid} connected`);
     });
     cluster.on('disconnect', (worker) => {
-      logger.info(`Cluster ${worker.process.pid} disconnected`);
+      // logger.info(`Cluster ${worker.process.pid} disconnected`);
     });
     cluster.on('exit', (worker) => {
-      logger.info(`Cluster ${worker.process.pid} is dead`);
+      // logger.info(`Cluster ${worker.process.pid} is dead`);
       // Ensuring a new cluster will start if an old one dies
       cluster.fork();
     });
