@@ -3,19 +3,18 @@ const cluster = require('cluster');
 const os = require('os');
 require('dotenv').config();
 
-const { logger } = require('./config/logger');
-const db = require('./config/db');
+// const { logger } = require('./config/logger');
 
 const app = express();
 app.use(express.json());
 
-require('./startup/routes')(app, db);
+require('./startup/routes')(app);
 
 function server(port) {
-  app.listen(port, () => logger.info(`Listening on port ${port}...`));
+  app.listen(port, () => {});// logger.info(`Listening on port ${port}...`));
 }
 
-function forkCPUs(operatinServer) {
+function forkCPUs(operatingServer) {
   const CPUS = os.cpus();
   if (cluster.isMaster) {
     CPUS.forEach(() => {
@@ -33,7 +32,7 @@ function forkCPUs(operatinServer) {
       cluster.fork();
     });
   } else {
-    operatinServer(Number(process.env.PORT));
+    operatingServer(Number(process.env.PORT));
   }
 }
 if (process.env.NODE_ENV === 'production') {
