@@ -1,33 +1,39 @@
 const _ = require('lodash');
 
-const validate = require('../../../util/helpers/validation');
+const { bcryptPassword } = require('../../../services/user.service');
 const { pagination } = require('../../../util/PaginationUtil/pagination');
-const { validateUser, JoiUserSchema } = require('../../../services/user.service');
 const { User } = require('../models/user');
+const jsonUserSchema = require('../schema/user.json');
+const validate = require('../../../util/helpers/validation');
 
 class UserController {
   /**
-   *
-   * @param function validation
-   * @param validationSchema JoiSchema
-   * @param DBModel model
+   * @param DBModel User
    */
-  // constructor() {
-    
-  //  }
+  constructor() {
+    this.User = User;
+  }
 
   async index(req, res) {
-    // const users = await this.model.find();
-    // const usersFound = _.map(users, user => ({ _id: user.id, name: user.name, email: user.email }));
-    // res.json(usersFound);
+    const users = await this.User.findAll();
+    const usersFound = _.map(users, user => ({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      mobile: user.mobile,
+      verified: user.verified,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    }));
+    res.json(usersFound);
   }
 
   async getLimited(req, res) {
-    // const limitedUsersList = await pagination(this.model, req);
-    // const userList = limitedUsersList.data.map(user => _.pick(user, ['_id', 'name', 'email']));
-    // const userListMapped = _.pick(limitedUsersList, ['object', 'data', 'has_more', 'pageCount', 'itemCount', 'pages']);
-    // userListMapped.data = userList;
-    // res.json(userListMapped);
+    const limitedUsersList = await pagination(this.User, req);
+    const userList = limitedUsersList.data.map(user => _.pick(user, ['id', 'username', 'email', 'mobile', 'verified', 'createdAt', 'updatedAt']));
+    const userListMapped = _.pick(limitedUsersList, ['object', 'data', 'has_more', 'pageCount', 'itemCount', 'pages']);
+    userListMapped.data = userList;
+    res.json(userListMapped);
   }
 
   async getUser(req, res, next) {
@@ -44,20 +50,35 @@ class UserController {
     // return res.json(_.pick(user, ['_id', 'name', 'email']));
   }
 
+  /**
+   * req.body = {username, mobile, password}.
+   * res.json() sends {id, username, mobiles, verified, createdAt, updatedAt}.
+   * next() sends error to error middleware error.
+   * errors:
+   *   1- maybe validation error.
+   *   2- the user registering with same mobile otherwise the user object will be created
+   *   if mobile not exists in database.
+   */
   async create(req, res, next) {
-    // const { errors } = await validate(jsonUserSchema, req.body);
-    // if (errors) return next(errors);
-    User.create(req.body)
-        .then(user => res.json(user)).catch(err => {
-          const error = {
-            message: JSON.stringify(err),
-          }
-          next(error)
-        });
-        
-   
-    // console.log(User);
-    // return res.json();
+    // validation.
+    const errors = await validate(jsonUserSchema, req.body);
+    if (errors.length) return next({ message: errors, status: 400 });
+    // hashing password before saving to database.
+    const { password } = req.body;
+    const hashedPassword = await bcryptPassword(password);
+    // find user by mobile if not found create it.
+    const user = await this.User.findOrCreate({
+      where: { mobile: req.body.mobile },
+      defaults: {
+        username: req.body.username,
+        password: hashedPassword,
+        mobile: req.body.mobile,
+      },
+    });
+    if (user[1] === false) {
+      return next({ message: 'mobile number already exists, forgot your password?', status: 409 });
+    }
+    return res.json(_.pick(user[0], ['id', 'username', 'mobile', 'verified', 'createdAt', 'updatedAt']));
   }
 }
 
