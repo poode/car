@@ -12,6 +12,10 @@ router.get('/id/:id', UserController.getUser.bind(UserController));
 
 router.post('/register', UserController.create.bind(UserController));
 
+router.delete('/delete/id/:id', UserController.deleteUser.bind(UserController));
+
+router.delete('/delete/mobile/:mobile', UserController.deleteUser.bind(UserController));
+
 // router.put('/:id', UserController.update.bind(UserController));
 
 // router.delete('/:id', UserController.destroy.bind(UserController));

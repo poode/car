@@ -1,14 +1,12 @@
-const _ = require('lodash');
-
+const phone = require('phone');
 const {
-  bcryptPassword,
-  getUserByMobile,
   returnAllUsers,
   findUserByIdOrMobile,
+  limitedUsers,
+  createUser,
+  findUserByIdOrMobileAndDelete,
 } = require('../../../services/user.service');
 
-const { findOrCreate } = require('../../../util/helpers/ormFunctions');
-const { pagination } = require('../../../util/PaginationUtil/pagination');
 const { User } = require('../models/user');
 const jsonUserSchema = require('../schema/user.json');
 const { validate, validateMobileOrId } = require('../../../util/helpers/validation');
@@ -28,11 +26,8 @@ class UserController {
   }
 
   async getLimited(req, res) {
-    const limitedUsersList = await pagination(this.User, req);
-    const userList = limitedUsersList.data.map(user => _.pick(user, ['id', 'username', 'email', 'mobile', 'verified', 'createdAt', 'updatedAt']));
-    const userListMapped = _.pick(limitedUsersList, ['object', 'data', 'has_more', 'pageCount', 'itemCount', 'pages']);
-    userListMapped.data = userList;
-    res.json(userListMapped);
+    const userPaging = await limitedUsers(this.User, req);
+    res.json(userPaging);
   }
 
   async getUser(req, res, next) {
@@ -41,40 +36,37 @@ class UserController {
       const error = { message: 'please enter valid number', status: 400 };
       return next(error);
     }
-    const user = await findUserByIdOrMobile(this.User, req);
+    const { user, error } = await findUserByIdOrMobile(this.User, req);
+    if (error) return next(error);
     return res.json(user);
   }
 
-  /**
-   * req.body = {username, mobile, password}.
-   * res.json() sends {id, username, mobiles, verified, createdAt, updatedAt}.
-   * next() sends error to error middleware error.
-   * errors:
-   *   1- maybe validation error.
-   *   2- the user registering with same mobile otherwise the user object will be created
-   *   if mobile not exists in database.
-   */
   async create(req, res, next) {
     // validation.
     const errors = await validate(jsonUserSchema, req.body);
     if (errors.length) return next({ message: errors, status: 400 });
-    // hashing password before saving to database.
-    const hashedPassword = await bcryptPassword(req.body.password);
-    // find user by mobile if not found create it.
-    const options = {
-      where: { mobile: req.body.mobile },
-      defaults: {
-        username: req.body.username,
-        password: hashedPassword,
-        mobile: req.body.mobile,
-      },
-    };
-    const { modelInstance, modelExists } = await findOrCreate(this.User, options);
-    if (modelExists === false) {
-      return next({ message: 'mobile number already exists, forgot your password?', status: 409 });
+    // Country Code for Kingdom of Saudi Arabia is SAU
+    const isPhone = phone(req.body.mobile.toString(), 'SAU');
+    if (!isPhone.length) return next({ message: 'please enter a valid Saudi Arabia mobile number', status: 400 });
+    const { error, user } = await createUser(this.User, req);
+    if (error) return next(error);
+    return res.json(user);
+  }
+
+  async deleteUser(req, res, next) {
+    let message = '';
+    const validateNumber = validateMobileOrId(req.params, req);
+    if (!validateNumber) {
+      let error = '';
+      if (req.params.id) error = { message: 'please enter valid id number', status: 400 };
+      if (req.params.mobile) error = { message: 'please enter valid mobile number', status: 400 };
+      return next(error);
     }
-    const findUser = await getUserByMobile(this.User, modelInstance.mobile);
-    return res.json(findUser);
+    const { error } = await findUserByIdOrMobileAndDelete(this.User, req);
+    if (error) return next(error);
+    if (req.params.id) message = { message: `User with given ID: ${req.params.id} deleted successfully` };
+    if (req.params.mobile) message = { message: `User with given Mobile: ${req.params.mobile} deleted successfully` };
+    return res.json(message);
   }
 }
 

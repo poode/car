@@ -1,6 +1,10 @@
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
 
+const { pagination } = require('../util/PaginationUtil/pagination');
+const { findOrCreate } = require('../util/helpers/ormFunctions');
+
+
 /**
  * @param {*} password and plain string
  * @returns {*} hashed password
@@ -43,28 +47,98 @@ async function returnAllUsers(userModel) {
   return usersFound;
 }
 
+/**
+ *
+ * @param {*} model is ORM Object
+ * @param {*} req is the request Object
+ * @returns results object with error or user.
+ */
 async function findUserByIdOrMobile(model, req) {
+  const results = {
+    error: '',
+    user: '',
+  };
+  const whereObject = {};
   if (req.path.includes('id')) {
-    const user = await model.findOne({
-      where: { id: req.params.id },
-      attributes: ['id', 'username', 'email', 'mobile', 'verified', 'createdAt', 'updatedAt'],
-    });
-    return user;
+    whereObject.id = req.params.id;
   }
   if (req.path.includes('mobile')) {
-    const user = await model.findOne({
-      where: { mobile: req.params.id },
-      attributes: ['id', 'username', 'email', 'mobile', 'verified', 'createdAt', 'updatedAt'],
-    });
-    return user;
+    whereObject.mobile = req.params.mobile;
   }
-  return false;
+  const user = await model.findOne({
+    where: whereObject,
+    attributes: ['id', 'username', 'email', 'mobile', 'verified', 'createdAt', 'updatedAt'],
+  });
+  if (!user) results.error = { message: 'no user found with given id', status: 404 };
+  results.user = user;
+  return results;
 }
 
+/**
+ *
+ * @param {*} model is ORM Object
+ * @param {*} req is the request Object.
+ * @returns paginated object with found users.
+ */
+async function limitedUsers(model, req) {
+  const limitedUsersList = await pagination(model, req);
+  const userList = limitedUsersList.data.map(user => _.pick(user, ['id', 'username', 'email', 'mobile', 'verified', 'createdAt', 'updatedAt']));
+  const userListMapped = _.pick(limitedUsersList, ['object', 'data', 'has_more', 'pageCount', 'itemCount', 'pages']);
+  userListMapped.data = userList;
+  return userListMapped;
+}
+
+async function createUser(model, req) {
+  const results = {
+    error: '',
+    user: '',
+  };
+  // hashing password before saving to database.
+  const hashedPassword = await bcryptPassword(req.body.password);
+  // find user by mobile if not found create it.
+  const options = {
+    where: { mobile: req.body.mobile },
+    defaults: {
+      username: req.body.username,
+      password: hashedPassword,
+      mobile: req.body.mobile,
+    },
+  };
+  const { modelInstance, modelExists } = await findOrCreate(model, options);
+  if (modelExists === false) {
+    results.error = { message: 'mobile number already exists, forgot your password?', status: 409 };
+    return results;
+  }
+  results.user = await getUserByMobile(model, modelInstance.mobile);
+  return results;
+}
+
+async function findUserByIdOrMobileAndDelete(model, req) {
+  const results = {
+    error: '',
+    user: '',
+  };
+  const whereObject = {};
+  if (req.path.includes('id')) {
+    whereObject.id = req.params.id;
+  }
+  if (req.path.includes('mobile')) {
+    whereObject.mobile = req.params.mobile;
+  }
+  const user = await model.destroy({
+    where: whereObject,
+  });
+  if (!user) results.error = { message: 'no user found with given ID', status: 404 };
+  results.user = user;
+  return results;
+}
 
 module.exports = {
   bcryptPassword,
   getUserByMobile,
   returnAllUsers,
   findUserByIdOrMobile,
+  limitedUsers,
+  createUser,
+  findUserByIdOrMobileAndDelete,
 };
