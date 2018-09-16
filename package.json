@@ -8,8 +8,9 @@
     "dev": "nodemon index",
     "start": "node index"
   },
+  "repository": "https://github.com/poode/car.git",
   "keywords": [],
-  "author": "",
+  "author": "poode@github.com",
   "license": "ISC",
   "dependencies": {
     "@godaddy/terminus": "^2.4.1",
