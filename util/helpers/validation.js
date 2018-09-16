@@ -14,11 +14,12 @@ require('ajv-keywords')(ajv, 'uniqueItemProperties');
 function validate(modelSchema, inputSchema) {
   const validateSchema = ajv.compile(modelSchema);
   const valid = validateSchema(inputSchema);
-  const errorArray = [];
+  let errorArray = '';
   if (!valid) {
     // @TODO will change en to ar and vice versa based on request local
     localize.en(validateSchema.errors);
     validateSchema.errors.map((err) => {
+      errorArray = [];
       if (!err.dataPath) {
         errorArray.push({ fieldRequirements: `${JSON.stringify(err.params)} ${err.message}` });
       } else {
