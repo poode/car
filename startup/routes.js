@@ -16,14 +16,14 @@ const { translatorMiddleware } = require('../middleware/translator');
 module.exports = (app) => {
   app.use(compression());
   app.use(helmetMiddleware);
-  // app.use(logHandler);
+  app.use(logHandler);
   app.use(tooBusyMiddleware);
   app.use(corsMiddleware);
   app.use(new RateLimiter(15, 100).limiter);
   app.use(translatorMiddleware);
   app.use('/api/v1/login', login);
   app.use(paginate.middleware(10, 50));
-  // app.use(isAuthorized);
+  app.use(isAuthorized);
   app.use(new RateLimiter(15, 100).limiter);
   app.use('/api/v1/users', users);
   app.use('*', notFound);
