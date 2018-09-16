@@ -21,6 +21,7 @@
       },
       "password": {
         "type": "string",
+        "pattern": "^(?=.*[\\d])(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#_$%^&*])[\\w!@#$%^&*]{6,}$",
         "minLength": 6,
         "maxLength": 255
       },
