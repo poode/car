@@ -1,7 +1,5 @@
 const jwt = require('jsonwebtoken');
 
-// const { getUser } = require('../services/user.service');
-
 async function isAuthorized(req, res, next) {
   const token = req.get('x-auth-token');
   if (!token) {
@@ -14,16 +12,16 @@ async function isAuthorized(req, res, next) {
       return false;
     }
     const {
-      id, email, iat, exp,
+      id, mobile, iat, exp,
     } = decoded;
-    if (!email) {
+    if (!mobile) {
       next({ message: 'invalid token', status: 403 });
       return false;
     }
     res.header('x-auth-token-creation', iat);
     res.header('x-auth-token-expiry', exp);
     res.locals.userId = id;
-    res.locals.userEmail = email;
+    res.locals.userMobile = mobile;
     next();
     return false;
   });
