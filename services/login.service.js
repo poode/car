@@ -1,54 +1,52 @@
-const Joi = require('joi');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const _ = require('lodash');
 
-
+const { validate } = require('../util/helpers/validation');
+const LoginSchema = require('../api/v1/schema/login.json');
 const { User } = require('../api/v1/models/user');
 
-// const JoiLoginSchema = {
-//   email: Joi.string().email().required(),
-//   password: Joi.string().min(5).max(255).required(),
-// };
 
-// function validation(credentials) {
-//   return Joi.validate(credentials, JoiLoginSchema);
-// }
+async function tokenGenerator(signOption) {
+  const token = await jwt.sign(signOption, process.env.APP_SECRET, { expiresIn: '36h' });
+  return token;
+}
 
-// async function tokenGenerator(id, email) {
-//   const token = await jwt.sign({ id, email }, process.env.APP_SECRET, { expiresIn: '24h' });
-//   return token;
-// }
+async function authentication(reqBody) {
+  const results = {
+    error: '',
+    user: '',
+    token: '',
+  };
+  const error = validate(LoginSchema, reqBody);
+  if (error) {
+    results.error = error;
+    return results;
+  }
 
-// async function authentication(req, res, next) {
-//   const { error } = validation(req.body);
-//   if (error) {
-//     const err = { message: error.details[0].message, status: 400 };
-//     next(err);
-//     return false;
-//   }
+  const user = await User.findOne({
+    where: { mobile: reqBody.mobile },
+    attributes: ['id', 'username', 'password', 'mobile', 'email', 'verified', 'createdAt', 'updatedAt'],
+  });
+  if (!user) {
+    const err = { message: 'this mobile is not found in our databases', status: 404 };
+    results.error = err;
+    return results;
+  }
 
-//   const user = await User.findOne({ email: req.body.email });
-//   if (!user) {
-//     const err = { message: 'user is not found in our databases', status: 404 };
-//     next(err);
-//     return false;
-//   }
+  const match = await bcrypt.compare(reqBody.password, user.password);
+  if (!match) {
+    const err = { message: 'the entered mobile or password is invalid!', status: 500 };
+    results.error = err;
+    return results;
+  }
+  const signOptions = _.pick(user, ['id', 'username', 'mobile', 'email', 'verified', 'createdAt', 'updatedAt']);
+  const token = await tokenGenerator(signOptions);
+  results.token = token;
+  results.user = signOptions;
+  return results;
+}
 
-//   const match = await bcrypt.compare(req.body.password, user.password);
-//   if (!match) {
-//     const err = { message: 'the entered email or password is invalid!', status: 500 };
-//     next(err);
-//     return false;
-//   }
-//   const token = await tokenGenerator(user.id, user.email);
-//   return res.header('x-auth-token', token).send({
-//     authenticated: true,
-//     userId: user.id,
-//     userEmail: user.email,
-//     token,
-//   });
-// }
-
-// module.exports = {
-//   authentication,
-// };
+module.exports = {
+  authentication,
+};

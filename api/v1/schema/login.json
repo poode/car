@@ -1,0 +1,16 @@
+{
+    "type": "object",
+    "required": ["mobile", "password"],
+    "properties": {
+      "mobile": {
+        "type": "string",
+        "minLength": 12,
+        "maxLength": 12,
+        "unique": true
+      },
+      "password": {
+        "type": "string",
+        "maxLength": 255
+      }
+    }
+  }
