@@ -9,8 +9,9 @@
         "maxLength": 255
       },
       "mobile": {
-        "type": "number",
-        "minimum": 12,
+        "type": "string",
+        "maxLength": 12,
+        "minLength": 12,
         "unique": true
       },
       "email": {
