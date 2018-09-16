@@ -53,6 +53,13 @@ class UserController {
     return res.json(user);
   }
 
+  /**
+   * @TODO once I get what user info needed will edit DB and start
+   * implementing this method
+   */
+  // async function updateUser(params) {
+  // }
+
   async deleteUser(req, res, next) {
     let message = '';
     const validateNumber = validateMobileOrId(req.params, req);
