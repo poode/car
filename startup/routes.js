@@ -22,10 +22,10 @@ module.exports = (app) => {
   app.use(new RateLimiter(15, 100).limiter);
   app.use(translatorMiddleware);
   app.use('/api/v1/login', login);
+  app.use('/api/v1/users', users);
   app.use(paginate.middleware(10, 50));
   app.use(isAuthorized);
   app.use(new RateLimiter(15, 100).limiter);
-  app.use('/api/v1/users', users);
   app.use('*', notFound);
   app.use(errorHandler);
 };
