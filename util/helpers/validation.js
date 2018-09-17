@@ -38,13 +38,13 @@ function validateMobileOrId(reqParam, req) {
   let { id, mobile } = reqParam;
   id = parseInt(id, 0);
   mobile = parseInt(mobile, 0);
-  if ((req.path.includes('id') && !isNumber(id)) || (req.path.includes('mobile') && !isNumber(mobile))) {
+  console.log(mobile);
+  if ((req.params.id && !isNumber(id)) || (req.params.mobile && !isNumber(mobile))) {
     return false;
   }
   if (mobile) {
-    const idOrMobile = reqParam.toString();
     // Country Code for Kingdom of Saudi Arabia is SAU
-    const isPhone = phone(idOrMobile, 'SAU');
+    const isPhone = phone(mobile.toString(), 'SAU');
     if (!isPhone.length) {
       return false;
     }
