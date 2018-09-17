@@ -1,5 +1,4 @@
 const compression = require('compression');
-const paginate = require('express-paginate');
 
 const users = require('../api/v1/routes/users');
 const login = require('../api/v1/routes/login');
@@ -22,8 +21,10 @@ module.exports = (app) => {
   app.use(new RateLimiter(15, 100).limiter);
   app.use(translatorMiddleware);
   app.use('/api/v1/login', login);
+  // @TODO adding pagination middleware to prevent
+  // using high records numbers on endpoint responses
+  // app.use('/api/v1/?/limit/1/page/2');
   app.use('/api/v1/users', users);
-  app.use(paginate.middleware(10, 50));
   app.use(isAuthorized);
   app.use(new RateLimiter(15, 100).limiter);
   app.use('*', notFound);
