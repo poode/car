@@ -38,7 +38,6 @@ function validateMobileOrId(reqParam, req) {
   let { id, mobile } = reqParam;
   id = parseInt(id, 0);
   mobile = parseInt(mobile, 0);
-  console.log(mobile);
   if ((req.params.id && !isNumber(id)) || (req.params.mobile && !isNumber(mobile))) {
     return false;
   }
