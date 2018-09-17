@@ -1,20 +1,29 @@
-const paginate = require('express-paginate');
-
 async function pagination(model, req) {
-  const results = await model.findAndCountAll({
-    limit: req.query.limit,
-    offset: req.skip,
-  });
-  const itemCount = results.count;
-  const pageCount = Math.ceil(itemCount / req.query.limit);
-  return {
-    object: 'list',
-    has_more: paginate.hasNextPages(req)(pageCount),
-    data: results.rows,
-    pageCount,
-    itemCount,
-    pages: paginate.getArrayPages(req)(3, pageCount, req.query.page),
+  const limit = Number(req.params.limit); // number of records per page
+  let offset = 0;
+  const { count } = await model.findAndCountAll();
+  let page = Number(req.params.page);
+  const error = {
+    message: '',
+    status: '',
   };
+  if (!page || !limit) {
+    error.message = 'invalid limit or page Number';
+    error.status = 400;
+    page = 1;
+  }
+  const pages = Math.ceil(Number(count) / limit);
+  offset = limit * (Number(page) - 1);
+  const modelToPaginate = await model.findAll({
+    limit,
+    offset,
+  });
+  const paginated = {
+    result: modelToPaginate,
+    count,
+    pages,
+  };
+  return { paginated, error };
 }
 
 module.exports = {

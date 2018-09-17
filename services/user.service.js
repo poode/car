@@ -81,11 +81,9 @@ async function findUserByIdOrMobile(model, req) {
  * @returns paginated object with found users.
  */
 async function limitedUsers(model, req) {
-  const limitedUsersList = await pagination(model, req);
-  const userList = limitedUsersList.data.map(user => _.pick(user, ['id', 'username', 'email', 'mobile', 'verified', 'createdAt', 'updatedAt']));
-  const userListMapped = _.pick(limitedUsersList, ['object', 'data', 'has_more', 'pageCount', 'itemCount', 'pages']);
-  userListMapped.data = userList;
-  return userListMapped;
+  const { error, paginated } = await pagination(model, req);
+  if (error.message) return { message: error.message, status: error.status };
+  return paginated;
 }
 
 async function createUser(model, req) {

@@ -25,9 +25,10 @@ class UserController {
     res.json(usersFound);
   }
 
-  async getLimited(req, res) {
+  async getLimited(req, res, next) {
     const userPaging = await limitedUsers(this.User, req);
-    res.json(userPaging);
+    if (userPaging.message) return next(userPaging);
+    return res.json(userPaging);
   }
 
   async getUser(req, res, next) {

@@ -6,7 +6,7 @@ const UserController = require('../controllers/UserController');
 
 router.get('/', isAuthorized, UserController.index.bind(UserController));
 
-router.get('/usersList', isAuthorized, UserController.getLimited.bind(UserController));
+router.get('/limit/:limit/page/:page', isAuthorized, UserController.getLimited.bind(UserController));
 
 router.get('/mobile/:mobile', isAuthorized, UserController.getUser.bind(UserController));
 
