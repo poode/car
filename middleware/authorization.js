@@ -11,7 +11,7 @@ async function isAuthorized(req, res, next) {
       return next(err);
     }
     const {
-      id, mobile, iat, exp,
+      id, mobile, iat, exp, verified, username,
     } = decoded;
     if (!mobile) {
       next({ message: 'invalid token', status: 400 });
@@ -21,6 +21,8 @@ async function isAuthorized(req, res, next) {
     res.header('x-auth-token-expiry', exp);
     res.locals.userId = id;
     res.locals.userMobile = mobile;
+    res.locals.verified = verified;
+    res.locals.username = username;
     next();
     return false;
   });
