@@ -2,6 +2,7 @@ const Ajv = require('ajv');
 const isNumber = require('is-number');
 const phone = require('phone');
 const localize = require('ajv-i18n');
+const _ = require('lodash');
 
 const ajv = new Ajv({ allErrors: true });
 require('ajv-keywords')(ajv, 'uniqueItemProperties');
@@ -14,16 +15,15 @@ require('ajv-keywords')(ajv, 'uniqueItemProperties');
 function validate(modelSchema, inputSchema) {
   const validateSchema = ajv.compile(modelSchema);
   const valid = validateSchema(inputSchema);
-  let errorArray = '';
+  const errorArray = [];
   if (!valid) {
     // @TODO will change en to ar and vice versa based on request local
     localize.en(validateSchema.errors);
-    validateSchema.errors.map((err) => {
-      errorArray = [];
+    _.map(validateSchema.errors, (err) => {
       if (!err.dataPath) {
         errorArray.push({ fieldRequirements: `${JSON.stringify(err.params)} ${err.message}` });
       } else {
-        errorArray.push({ fieldRequirements: `${err.dataPath} ${err.message}` });
+        errorArray.push({ fieldRequirements: `${err.dataPath.replace('.', '')} ${err.message}` });
       }
     });
   }
