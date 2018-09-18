@@ -14,7 +14,7 @@ module.exports = {
       { roleType: 'employee' },
     ];
     return seeder(queryInterface, 'LT_roleTypes', columns, 3);
-  },
+  }
 
   down: (queryInterface, Sequelize) => {
     /*
@@ -24,5 +24,5 @@ module.exports = {
       Example:
       */
     return queryInterface.bulkDelete('LT_roleTypes', null, {});
-  }
+  },
 };
