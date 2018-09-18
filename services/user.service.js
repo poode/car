@@ -83,8 +83,11 @@ async function findUserByIdOrMobile(model, req) {
 async function limitedUsers(model, req) {
   const { error, paginated } = await pagination(model, req);
   if (error.message) return { message: error.message, status: error.status };
-  const picked = paginated.result
-    .map(user => _.pick(user, ['id', 'username', 'email', 'verified', 'mobile', 'createdAt', 'updatedAt']));
+  const picked = {
+    list: paginated.result.map(user => _.pick(user, ['id', 'username', 'email', 'verified', 'mobile', 'createdAt', 'updatedAt'])),
+    count: paginated.count,
+    pages: paginated.pages,
+  };
   return picked;
 }
 
