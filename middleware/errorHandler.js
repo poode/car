@@ -36,6 +36,11 @@ module.exports = (err, req, res, next) => {
     err.message = `your session has been expired at ${err.expiredAt}`;
     err.stack = JSON.stringify(err);
   }
+  if(err.name === 'JsonWebTokenError') {
+    err.status = 406;
+    // err.message = err.message;
+    err.stack = JSON.stringify(err);
+  }
   const error = {
     message: err.message || err.name,
     stack: err.stack,
