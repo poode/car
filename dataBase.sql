@@ -52,6 +52,7 @@ CREATE TABLE `orders` (
 	`user_id` INT NOT NULL,
 	`carType_id` INT NOT NULL,
 	`serviceType_id` INT NOT NULL,
+	`location` VARCHAR(255) NOT NULL,
 	`startTime` DATETIME,
 	`arrivingTime` DATETIME,
 	`endTime` DATETIME,
