@@ -8,8 +8,7 @@ async function isAuthorized(req, res, next) {
   }
   jwt.verify(token, process.env.APP_SECRET, async (err, decoded) => {
     if (err) {
-      next(err);
-      return false;
+      return next(err);
     }
     const {
       id, mobile, iat, exp,
