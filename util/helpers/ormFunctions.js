@@ -13,7 +13,19 @@ async function findOrCreate(model, options) {
   return { modelInstance: any[0], modelExists: any[1] };
 }
 
+/**
+ * this function used inside seeder only
+ * @param {*} queryInterface provided from original seeder function
+ * @param {*} TableName this is table name
+ * @param {*} columns column is array of objects with their data to submit in database
+ */
+function seeder(queryInterface, TableName, columns, length) {
+  for (let index = 0; index < length; index++) {
+    queryInterface.bulkInsert(TableName, [columns[index]], {});
+  }
+}
 
 module.exports = {
   findOrCreate,
+  seeder,
 };
