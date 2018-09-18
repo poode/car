@@ -31,13 +31,11 @@ process.on('uncaughtException', (err) => {
 });
 
 module.exports = (err, req, res, next) => {
-  // if (err.name === 'TokenExpiredError') {
-  //   err = {
-  //     status: 403,
-  //     message: `your session has been expired at ${err.expiredAt}`,
-  //     stack: '',
-  //   };
-  // }
+  if (err.name === 'TokenExpiredError') {
+    err.status = 403;
+    err.message = `your session has been expired at ${err.expiredAt}`;
+    err.stack = JSON.stringify(err);
+  }
   const error = {
     message: err.message || err.name,
     stack: err.stack,
@@ -46,6 +44,7 @@ module.exports = (err, req, res, next) => {
     requestTime: `${new Date()}`,
     status: err.status || 500,
   };
+
   logger.error(JSON.stringify(error));
   return res.status(err.status).json({ error: _.pick(error, ['message', 'status']) });
 };
