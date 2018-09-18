@@ -6,21 +6,29 @@ const { validate } = require('../util/helpers/validation');
 const LoginSchema = require('../api/v1/schema/login.json');
 const { User } = require('../api/v1/models/user');
 
-
+/**
+ *
+ * @param {*} signOption the option needed to create the token
+ * like user data and his roles for example
+ */
 async function tokenGenerator(signOption) {
   const token = await jwt.sign(signOption, process.env.APP_SECRET, { expiresIn: '36h' });
   return token;
 }
 
+/**
+ *
+ * @param {*} reqBody the request body to authenticate the user
+ */
 async function authentication(reqBody) {
   const results = {
     error: '',
     user: '',
     token: '',
   };
-  const error = validate(LoginSchema, reqBody);
-  if (error) {
-    results.error = error;
+  const errors = validate(LoginSchema, reqBody);
+  if (errors.length) {
+    results.error = errors;
     return results;
   }
 
