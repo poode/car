@@ -1,10 +1,13 @@
 const winston = require('winston');
 
 const logger = winston.createLogger({
-  level: 'info',
+  level: 'silly',
+  exitOnError: false,
   format: winston.format.combine(
     winston.format.colorize(),
     winston.format.json(),
+    winston.format.timestamp(),
+    winston.format.printf(info => `${info.timestamp}`),
   ),
   maxsize: 5242880,
   maxFiles: 5,
@@ -13,11 +16,17 @@ const logger = winston.createLogger({
     // - Write to all logs with level `info` and below to `combined.log`
     // - Write all logs error (and below) to `error.log`.
     //
-    new winston.transports.File({ filename: 'error.log', level: 'error', handleExceptions: true }),
+    new winston.transports.Console({
+      handleExceptions: true,
+      prettyPrint: true,
+      humanReadableUnhandledException: true,
+    }),
+    // new winston.transports.Console(),
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
     new winston.transports.File({ filename: 'combined.log' }),
   ],
   exceptionHandlers: [
-    new winston.transports.File({ filename: 'exceptions.log' }),
+    new winston.transports.File({ filename: 'exceptions.log', handleExceptions: true }),
   ],
 });
 
