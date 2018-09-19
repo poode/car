@@ -37,7 +37,7 @@ module.exports = (err, req, res, next) => {
     err.stack = JSON.stringify(err);
   }
   if(err.name === 'JsonWebTokenError') {
-    err.status = 406;
+    err.status = 403;
     // err.message = err.message;
     err.stack = JSON.stringify(err);
   }
