@@ -1,16 +1,17 @@
 const phone = require('phone');
+
 const {
   returnAllUsers,
   findUserByIdOrMobile,
   limitedUsers,
-  createUser,
+  RegisterUser,
   findUserByIdOrMobileAndDelete,
 } = require('../../../services/user.service');
 
 const { User } = require('../models/user');
 const jsonUserSchema = require('../schema/user.json');
 const { validate, validateMobileOrId } = require('../../../util/helpers/validation');
-
+const { logger } = require('../../../config/logger');
 
 class UserController {
   /**
@@ -43,13 +44,14 @@ class UserController {
   }
 
   async create(req, res, next) {
+    logger.debug(JSON.stringify(req.body));
     // validation.
     const errors = await validate(jsonUserSchema, req.body);
     if (errors.length) return next({ message: errors, status: 400 });
     // Country Code for Kingdom of Saudi Arabia is SAU
     const isPhone = phone(req.body.mobile.toString(), 'SAU');
     if (!isPhone.length) return next({ message: 'please enter a valid Saudi Arabia mobile number', status: 400 });
-    const { error, user } = await createUser(this.User, req);
+    const { error, user } = await RegisterUser(this.User, req);
     if (error) return next(error);
     return res.json(user);
   }
