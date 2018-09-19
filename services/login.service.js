@@ -63,6 +63,7 @@ async function signIn(reqBody, res) {
     });
     logger.debug(`Your Verification Code is ${verificationKey}`);
     res.locals.verificationKey = verificationKey;
+    // @TODO saving verificationKey to DB
   }
   return results;
 }
