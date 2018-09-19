@@ -11,6 +11,7 @@ const { isAuthorized } = require('../middleware/authorization');
 const { RateLimiter } = require('../middleware/rateLimiter');
 const { tooBusyMiddleware } = require('../middleware/tooBusy');
 const { translatorMiddleware } = require('../middleware/translator');
+const { verificationMiddleware } = require('../middleware/userMiddlewares/verifyUser');
 
 module.exports = (app) => {
   app.use(compression());
@@ -21,11 +22,9 @@ module.exports = (app) => {
   app.use(new RateLimiter(15, 100).limiter);
   app.use(translatorMiddleware);
   app.use('/api/v1/login', login);
-  // @TODO adding pagination middleware to prevent
-  // using high records numbers on endpoint responses
-  // app.use('/api/v1/?/limit/1/page/2');
   app.use('/api/v1/users', users);
   app.use(isAuthorized);
+  app.use(verificationMiddleware);
   app.use(new RateLimiter(15, 100).limiter);
   app.use('*', notFound);
   app.use(errorHandler);
