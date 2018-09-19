@@ -6,7 +6,9 @@ const logger = winston.createLogger({
   format: winston.format.combine(
     winston.format.colorize(),
     winston.format.json(),
-    winston.format.timestamp(),
+    winston.format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss',
+    }),
     winston.format.printf(info => `${info.timestamp}`),
   ),
   maxsize: 5242880,
