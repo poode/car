@@ -91,7 +91,7 @@ async function limitedUsers(model, req) {
   return picked;
 }
 
-async function createUser(model, req) {
+async function RegisterUser(model, req) {
   const results = {
     error: '',
     user: '',
@@ -142,6 +142,6 @@ module.exports = {
   returnAllUsers,
   findUserByIdOrMobile,
   limitedUsers,
-  createUser,
+  RegisterUser,
   findUserByIdOrMobileAndDelete,
 };
