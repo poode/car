@@ -1,10 +1,13 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
+const randomString = require('randomstring');
+
 
 const { validate } = require('../util/helpers/validation');
 const LoginSchema = require('../api/v1/schema/login.json');
 const { User } = require('../api/v1/models/user');
+const { logger } = require('../config/logger');
 
 /**
  *
@@ -20,7 +23,7 @@ async function tokenGenerator(signOption) {
  *
  * @param {*} reqBody the request body to authenticate the user
  */
-async function authentication(reqBody) {
+async function signIn(reqBody, res) {
   const results = {
     error: '',
     user: '',
@@ -48,13 +51,22 @@ async function authentication(reqBody) {
     results.error = err;
     return results;
   }
-  const signOptions = _.pick(user, ['id', 'username', 'mobile', 'email', 'verified', 'createdAt', 'updatedAt']);
+  const signOptions = _.pick(user, ['id', 'username', 'mobile', 'verified']);
   const token = await tokenGenerator(signOptions);
   results.token = token;
   results.user = signOptions;
+  logger.debug(`User is ${JSON.stringify(user)} verification Status ${user.verified}`);
+  if (!user.verified) {
+    const verificationKey = randomString.generate({
+      length: 6,
+      charset: 'numeric',
+    });
+    logger.debug(`Your Verification Code is ${verificationKey}`);
+    res.locals.verificationKey = verificationKey;
+  }
   return results;
 }
 
 module.exports = {
-  authentication,
+  signIn,
 };
