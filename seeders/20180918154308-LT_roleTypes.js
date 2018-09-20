@@ -1,5 +1,3 @@
-const { seeder } = require('../util/helpers/ormFunctions');
-
 module.exports = {
   up: (queryInterface, Sequelize) => {
     /*
@@ -13,7 +11,7 @@ module.exports = {
       { roleType: 'user' },
       { roleType: 'employee' },
     ];
-    return seeder(queryInterface, 'LT_roleTypes', columns);
+    return queryInterface.bulkInsert('LT_roleTypes', columns);
   },
 
   down: (queryInterface, Sequelize) => {
