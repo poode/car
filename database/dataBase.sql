@@ -5,6 +5,7 @@ CREATE TABLE `users` (
 	`password` VARCHAR(255) NOT NULL,
 	`mobile` VARCHAR(255) NOT NULL UNIQUE,
 	`verified` BOOLEAN NOT NULL DEFAULT false,
+	`verification` INT NOT NULL,
 	`createdAt` DATETIME,
 	`updatedAt` DATETIME,
 	PRIMARY KEY (`id`,`mobile`)
