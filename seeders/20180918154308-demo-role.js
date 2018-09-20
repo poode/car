@@ -13,8 +13,8 @@ module.exports = {
       { roleType: 'user' },
       { roleType: 'employee' },
     ];
-    return seeder(queryInterface, 'LT_roleTypes', columns, 3);
-  }
+    return seeder(queryInterface, 'LT_roleTypes', columns);
+  },
 
   down: (queryInterface, Sequelize) => {
     /*
