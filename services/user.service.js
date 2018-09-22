@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
+const randomString = require('randomstring');
 
 const { pagination } = require('../util/PaginationUtil/pagination');
 const { findOrCreate } = require('../util/helpers/ormFunctions');
@@ -96,8 +97,20 @@ async function RegisterUser(model, req) {
     error: '',
     user: '',
   };
+
   // hashing password before saving to database.
   const hashedPassword = await bcryptPassword(req.body.password);
+  // generate verificationKey
+  let verificationKey = randomString.generate({
+    length: 6,
+    charset: 'numeric',
+  });
+  if (verificationKey.length !== 6) {
+    verificationKey = randomString.generate({
+      length: 6,
+      charset: 'numeric',
+    });
+  }
   // find user by mobile if not found create it.
   const options = {
     where: { mobile: req.body.mobile },
@@ -105,8 +118,10 @@ async function RegisterUser(model, req) {
       username: req.body.username,
       password: hashedPassword,
       mobile: req.body.mobile,
+      verification: verificationKey,
     },
   };
+
   const { modelInstance, modelExists } = await findOrCreate(model, options);
   if (modelExists === false) {
     results.error = { message: 'mobile number already exists, forgot your password?', status: 409 };
@@ -136,6 +151,34 @@ async function findUserByIdOrMobileAndDelete(model, req) {
   return results;
 }
 
+async function verifyUser(model, req) {
+  const result = {
+    user: '',
+    error: '',
+  };
+  const user = await model.find({
+    where: { mobile: req.body.mobile },
+  });
+  if (!user) {
+    result.error = { message: `Mobile number ${req.body.mobile} is not exists on database`, status: 404 };
+    return result;
+  }
+  if (!user.verification) {
+    result.error = { message: `Mobile number ${req.body.mobile} is already verified`, status: 400 };
+    return result;
+  }
+  if (Number(req.body.verification) !== user.verification) {
+    result.error = { message: 'invalid verification number', status: 400 };
+    return result;
+  }
+  await model.update({ verified: true, verification: 0 }, { where: { mobile: user.mobile } });
+  const updatedUser = await model.find({
+    where: { mobile: req.body.mobile },
+  });
+  result.user = _.pick(updatedUser, ['id', 'username', 'mobile', 'verified']);
+  return result;
+}
+
 module.exports = {
   bcryptPassword,
   getUserByMobile,
@@ -144,4 +187,5 @@ module.exports = {
   limitedUsers,
   RegisterUser,
   findUserByIdOrMobileAndDelete,
+  verifyUser,
 };
