@@ -1,10 +1,11 @@
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const randomString = require('randomstring');
+const phone = require('phone');
 
 const { pagination } = require('../util/PaginationUtil/pagination');
 const { findOrCreate } = require('../util/helpers/ormFunctions');
-
+const { validate } = require('../util/helpers/validation');
 
 /**
  * @param {*} password and plain string
@@ -92,6 +93,13 @@ async function limitedUsers(model, req) {
   return picked;
 }
 
+/**
+ *
+ *
+ * @param {any} model is ORM Object
+ * @param {any} req
+ * @returns results Object contains error or created user
+ */
 async function RegisterUser(model, req) {
   const results = {
     error: '',
@@ -131,6 +139,13 @@ async function RegisterUser(model, req) {
   return results;
 }
 
+/**
+ *
+ *
+ * @param {any} model is ORM object
+ * @param {any} req
+ * @returns results with error or found user
+ */
 async function findUserByIdOrMobileAndDelete(model, req) {
   const results = {
     error: '',
@@ -151,6 +166,13 @@ async function findUserByIdOrMobileAndDelete(model, req) {
   return results;
 }
 
+/**
+ *
+ *
+ * @param {any} model is ORM Object
+ * @param {any} req
+ * @returns result which contains error or user will be verified
+ */
 async function verifyUser(model, req) {
   const result = {
     user: '',
@@ -179,6 +201,36 @@ async function verifyUser(model, req) {
   return result;
 }
 
+/**
+ *
+ *
+ * @param {any} schema JSON validation schema
+ * @param {any} req
+ * @returns result with error if not valid input request or valid with true
+ */
+async function validateSchemaAndMobile(schema, req) {
+  const result = {
+    valid: false,
+    error: '',
+  };
+
+  // validation.
+  const errors = await validate(schema, req.body);
+  if (errors.length) {
+    result.error = { message: errors, status: 400 };
+    return result;
+  }
+
+  // @TODO making regex validation as phone() validate if number has 9665 only
+  const isPhone = phone(req.body.mobile.toString(), 'SAU');
+  if (!isPhone.length) {
+    result.error = { message: 'please enter a valid Saudi Arabia mobile number', status: 400 };
+    return result;
+  }
+  result.valid = true;
+  return result;
+}
+
 module.exports = {
   bcryptPassword,
   getUserByMobile,
@@ -188,4 +240,5 @@ module.exports = {
   RegisterUser,
   findUserByIdOrMobileAndDelete,
   verifyUser,
+  validateSchemaAndMobile,
 };
