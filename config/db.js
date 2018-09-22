@@ -8,7 +8,7 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     dialect: process.env.DB_TYPE,
     operatorsAliases: false,
-    logging: logger.info,
+    logging: logger.warn,
     pool: {
       max: 5,
       min: 0,
