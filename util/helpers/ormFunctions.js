@@ -10,6 +10,7 @@ async function findOrCreate(model, options) {
     where: options.where,
     defaults: options.defaults,
   });
+  // @TODO array Destruction instead of any[]
   return { modelInstance: any[0], modelExists: any[1] };
 }
 
