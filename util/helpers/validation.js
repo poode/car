@@ -21,9 +21,9 @@ function validate(modelSchema, inputSchema) {
     localize.en(validateSchema.errors);
     _.map(validateSchema.errors, (err) => {
       if (!err.dataPath) {
-        errorArray.push({ fieldRequirements: `${JSON.stringify(err.params)} ${err.message}` });
+        errorArray.push({ field: `${JSON.stringify(err.params)} ${err.message}` });
       } else {
-        errorArray.push({ fieldRequirements: `${err.dataPath.replace('.', '')} ${err.message}` });
+        errorArray.push({ field: `${err.dataPath.replace('.', '')} ${err.message}` });
       }
     });
   }
