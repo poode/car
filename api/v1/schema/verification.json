@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "required": ["mobile", "verification"],
+  "properties": {
+    "mobile": {
+      "type": "string",
+      "minLength": 12,
+      "maxLength": 12,
+      "unique": true
+    },
+    "verification": {
+      "type": "string",
+      "pattern": "\\d+",
+      "maxLength": 255
+    }
+  }
+}

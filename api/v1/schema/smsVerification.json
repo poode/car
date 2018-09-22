@@ -1,0 +1,12 @@
+{
+    "type": "object",
+    "required": ["mobile"],
+    "properties": {
+      "mobile": {
+        "type": "string",
+        "minLength": 12,
+        "maxLength": 12,
+        "unique": true
+      }
+    }
+  }

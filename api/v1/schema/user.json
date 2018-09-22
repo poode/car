@@ -24,6 +24,11 @@
         "minLength": 6,
         "maxLength": 255
       },
+      "verification": {
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 255
+      },
       "verified": {
         "type": "boolean"
       }
