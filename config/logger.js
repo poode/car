@@ -9,7 +9,6 @@ const logger = winston.createLogger({
     winston.format.timestamp({
       format: 'YYYY-MM-DD HH:mm:ss',
     }),
-    winston.format.printf(info => `${info.timestamp}`),
   ),
   maxsize: 5242880,
   maxFiles: 5,
@@ -18,14 +17,19 @@ const logger = winston.createLogger({
     // - Write to all logs with level `info` and below to `combined.log`
     // - Write all logs error (and below) to `error.log`.
     //
-    new winston.transports.Console({
+    new winston.transports.File({
+      filename: 'error.log',
+      level: 'error',
+      prettyPrint: true,
+      humanReadableUnhandledException: true,
       handleExceptions: true,
+    }),
+    new winston.transports.File({ filename: 'combined.log' }),
+    new winston.transports.Console({
+      handleExceptions: false,
       prettyPrint: true,
       humanReadableUnhandledException: true,
     }),
-    // new winston.transports.Console(),
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'combined.log' }),
   ],
   exceptionHandlers: [
     new winston.transports.File({ filename: 'exceptions.log', handleExceptions: true }),
