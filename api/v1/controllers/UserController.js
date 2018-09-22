@@ -6,11 +6,15 @@ const {
   limitedUsers,
   RegisterUser,
   findUserByIdOrMobileAndDelete,
+  verifyUser,
 } = require('../../../services/user.service');
 
 const { User } = require('../models/user');
 const jsonUserSchema = require('../schema/user.json');
+const verificationSchema = require('../schema/verification.json');
+const smsVerification = require('../schema/smsVerification.json');
 const { validate, validateMobileOrId } = require('../../../util/helpers/validation');
+const { sms } = require('../../../util/sms/sendSMS');
 const { logger } = require('../../../config/logger');
 
 class UserController {
@@ -44,7 +48,6 @@ class UserController {
   }
 
   async create(req, res, next) {
-    logger.debug(JSON.stringify(req.body));
     // validation.
     const errors = await validate(jsonUserSchema, req.body);
     if (errors.length) return next({ message: errors, status: 400 });
@@ -54,6 +57,52 @@ class UserController {
     const { error, user } = await RegisterUser(this.User, req);
     if (error) return next(error);
     return res.json(user);
+  }
+
+  async getVerified(req, res, next) {
+    // validation.
+    const errors = await validate(verificationSchema, req.body);
+    if (errors.length) return next({ message: errors, status: 400 });
+    // @TODO making regex validation as phone() validate if number has 9665 only
+    const isPhone = phone(req.body.mobile.toString(), 'SAU');
+    if (!isPhone.length) return next({ message: 'please enter a valid Saudi Arabia mobile number', status: 400 });
+    const { error, user } = await verifyUser(this.User, req);
+    if (error) return next(error);
+    return res.json({ verified: true, user });
+  }
+
+  async sendSmsVerification(req, res, next) {
+    // validation.
+    const errors = await validate(smsVerification, req.body);
+    if (errors.length) return next({ message: errors, status: 400 });
+    // @TODO making regex validation as phone() validate if number has 9665 only
+    const isPhone = phone(req.body.mobile.toString(), 'SAU');
+    if (!isPhone.length) return next({ message: 'please enter a valid Saudi Arabia mobile number', status: 400 });
+    const verificationKey = await this.User.find({
+      where: { mobile: req.body.mobile },
+      attributes: ['verification'],
+    });
+    // logger.debug(`The verification code is: >>[${verificationKey.verification}]<<`);
+    const { sent, error } = await sms(`The verification code is: [${verificationKey.verification}] for mobile [${req.body.mobile}]
+    this message generated automatically using Slack APIs as a mock sms`);
+    if (error) return next(error);
+    return res.json({ mobile: `sms sent to ${req.body.mobile}. sms ID: ${sent}` });
+  }
+
+  // this method is for admins to get verification numbers
+  async getVerificationNumberByMobile(req, res, next) {
+    // validation.
+    const errors = await validate(smsVerification, req.body);
+    if (errors.length) return next({ message: errors, status: 400 });
+    // @TODO making regex validation as phone() validate if number has 9665 only
+    const isPhone = phone(req.body.mobile.toString(), 'SAU');
+    if (!isPhone.length) return next({ message: 'please enter a valid Saudi Arabia mobile number', status: 400 });
+    const verificationKey = await this.User.find({
+      where: { mobile: req.body.mobile },
+      attributes: ['verification'],
+    });
+
+    return res.json({ mobile: Number(req.body.mobile), verificationNumber: verificationKey.verification, message: 'this endpoint is for admins only' });
   }
 
   /**
