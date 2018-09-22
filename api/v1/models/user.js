@@ -2,37 +2,47 @@ const Sequelize = require('sequelize');
 
 const { db } = require('../../../config/db');
 
-function userModel(sequelize, dataType) {
+function userModel(sequelize, DataTypes) {
   return sequelize.define('users', {
     id: {
-      type: dataType.INTEGER,
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
     },
     username: {
-      type: dataType.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false,
-      trim: true,
     },
     email: {
-      notEmpty: true,
+      type: DataTypes.STRING(255),
       allowNull: true,
-      trim: true,
-      type: dataType.STRING,
-    },
-    mobile: {
-      type: dataType.STRING,
-      allowNull: false,
-      trim: true,
-      unique: true,
-      primaryKey: true,
     },
     password: {
-      type: dataType.STRING,
-      trim: true,
+      type: DataTypes.STRING(255),
       allowNull: false,
     },
+    mobile: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      primaryKey: true,
+    },
     verified: {
-      type: dataType.BOOLEAN,
-      trim: true,
+      type: DataTypes.INTEGER(1),
+      allowNull: false,
+      defaultValue: '0',
+    },
+    verification: {
+      type: DataTypes.INTEGER(11),
+      allowNull: true,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
 
   });
