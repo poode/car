@@ -1,8 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
-const randomString = require('randomstring');
-
 
 const { validate } = require('../util/helpers/validation');
 const LoginSchema = require('../api/v1/schema/login.json');
@@ -15,7 +13,7 @@ const { logger } = require('../config/logger');
  * like user data and his roles for example
  */
 async function tokenGenerator(signOption) {
-  const token = await jwt.sign(signOption, process.env.APP_SECRET, { expiresIn: '36h' });
+  const token = await jwt.sign(signOption, process.env.APP_SECRET, { expiresIn: '30d' });
   return token;
 }
 
@@ -23,7 +21,7 @@ async function tokenGenerator(signOption) {
  *
  * @param {*} reqBody the request body to authenticate the user
  */
-async function signIn(reqBody, res) {
+async function signIn(reqBody) {
   const results = {
     error: '',
     user: '',
