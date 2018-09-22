@@ -182,7 +182,7 @@ async function verifyUser(model, req) {
     where: { mobile: req.body.mobile },
   });
   if (!user) {
-    result.error = { message: `Mobile number ${req.body.mobile} is not exists on database`, status: 404 };
+    result.error = { message: `Mobile number ${req.body.mobile} doesn't exist on our database`, status: 404 };
     return result;
   }
   if (!user.verification) {
