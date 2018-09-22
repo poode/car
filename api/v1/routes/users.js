@@ -4,25 +4,25 @@ const { verificationMiddleware } = require('../../../middleware/userMiddlewares/
 
 const UserController = require('../controllers/UserController');
 
-router.get('/', isAuthorized, verificationMiddleware, UserController.index.bind(UserController));
+const authVerifyMiddleware = [isAuthorized, verificationMiddleware];
 
-router.get('/limit/:limit/page/:page', isAuthorized, verificationMiddleware, UserController.getLimited.bind(UserController));
-
-router.get('/mobile/:mobile', isAuthorized, verificationMiddleware, UserController.getUser.bind(UserController));
-
-router.get('/id/:id', isAuthorized, verificationMiddleware, UserController.getUser.bind(UserController));
+router.get('/', authVerifyMiddleware, UserController.index.bind(UserController));
+router.get('/limit/:limit/page/:page', authVerifyMiddleware, UserController.getLimited.bind(UserController));
+router.get('/mobile/:mobile', authVerifyMiddleware, UserController.getUser.bind(UserController));
+router.get('/id/:id', authVerifyMiddleware, UserController.getUser.bind(UserController));
+router.delete('/delete/id/:id', authVerifyMiddleware, UserController.deleteUser.bind(UserController));
+router.delete('/delete/mobile/:mobile', authVerifyMiddleware, UserController.deleteUser.bind(UserController));
 
 router.post('/register', UserController.create.bind(UserController));
 
+// this endpoint to post mobile and verification number to get verified mobile
 router.post('/verify', UserController.getVerified.bind(UserController));
 
+// this endpoint to send sms to requested mobile number which was registered
 router.post('/verification/sms', isAuthorized, UserController.sendSmsVerification.bind(UserController));
 
-router.post('/verification/number/by/mobile', isAuthorized, UserController.getVerificationNumberByMobile.bind(UserController));
-
-router.delete('/delete/id/:id', isAuthorized, verificationMiddleware, UserController.deleteUser.bind(UserController));
-
-router.delete('/delete/mobile/:mobile', isAuthorized, verificationMiddleware, UserController.deleteUser.bind(UserController));
+// this endpoint for admins @TODO adding admin middleware employee middleware user middleware
+router.post('/get/verification/number/by/mobile', isAuthorized, UserController.getVerificationNumberByMobile.bind(UserController));
 
 
 // router.put('/id/:id', UserController.update.bind(UserController));
