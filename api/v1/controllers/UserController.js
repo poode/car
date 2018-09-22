@@ -1,5 +1,3 @@
-const phone = require('phone');
-
 const {
   returnAllUsers,
   findUserByIdOrMobile,
@@ -7,15 +5,16 @@ const {
   RegisterUser,
   findUserByIdOrMobileAndDelete,
   verifyUser,
+  validateSchemaAndMobile,
 } = require('../../../services/user.service');
 
 const { User } = require('../models/user');
 const jsonUserSchema = require('../schema/user.json');
 const verificationSchema = require('../schema/verification.json');
-const smsVerification = require('../schema/smsVerification.json');
-const { validate, validateMobileOrId } = require('../../../util/helpers/validation');
+const smsVerificationSchema = require('../schema/smsVerificationSchema.json');
+const { validateMobileOrId } = require('../../../util/helpers/validation');
 const { sms } = require('../../../util/sms/sendSMS');
-const { logger } = require('../../../config/logger');
+// const { logger } = require('../../../config/logger');
 
 class UserController {
   /**
@@ -48,55 +47,49 @@ class UserController {
   }
 
   async create(req, res, next) {
-    // validation.
-    const errors = await validate(jsonUserSchema, req.body);
-    if (errors.length) return next({ message: errors, status: 400 });
-    // Country Code for Kingdom of Saudi Arabia is SAU
-    const isPhone = phone(req.body.mobile.toString(), 'SAU');
-    if (!isPhone.length) return next({ message: 'please enter a valid Saudi Arabia mobile number', status: 400 });
+    const validationResult = await validateSchemaAndMobile(jsonUserSchema, req);
+    if (validationResult.error) return next(validationResult.error);
+
     const { error, user } = await RegisterUser(this.User, req);
     if (error) return next(error);
     return res.json(user);
   }
 
   async getVerified(req, res, next) {
-    // validation.
-    const errors = await validate(verificationSchema, req.body);
-    if (errors.length) return next({ message: errors, status: 400 });
-    // @TODO making regex validation as phone() validate if number has 9665 only
-    const isPhone = phone(req.body.mobile.toString(), 'SAU');
-    if (!isPhone.length) return next({ message: 'please enter a valid Saudi Arabia mobile number', status: 400 });
+    const validationResult = await validateSchemaAndMobile(verificationSchema, req);
+    if (validationResult.error) return next(validationResult.error);
+
     const { error, user } = await verifyUser(this.User, req);
     if (error) return next(error);
     return res.json({ verified: true, user });
   }
 
   async sendSmsVerification(req, res, next) {
-    // validation.
-    const errors = await validate(smsVerification, req.body);
-    if (errors.length) return next({ message: errors, status: 400 });
-    // @TODO making regex validation as phone() validate if number has 9665 only
-    const isPhone = phone(req.body.mobile.toString(), 'SAU');
-    if (!isPhone.length) return next({ message: 'please enter a valid Saudi Arabia mobile number', status: 400 });
-    const verificationKey = await this.User.find({
+    const validationResult = await validateSchemaAndMobile(smsVerificationSchema, req);
+    if (validationResult.error) return next(validationResult.error);
+
+    const user = await this.User.find({
       where: { mobile: req.body.mobile },
-      attributes: ['verification'],
+      attributes: ['verification', 'verified'],
     });
-    // logger.debug(`The verification code is: >>[${verificationKey.verification}]<<`);
-    const { sent, error } = await sms(`The verification code is: [${verificationKey.verification}] for mobile [${req.body.mobile}]
-    this message generated automatically using Slack APIs as a mock sms`);
+
+    if (!user) return next({ message: `mobile number ${req.body.mobile} is not in our database`, status: 404 });
+
+    if (user.verified) return next({ message: `mobile number ${req.body.mobile} is already verifed`, status: 422 });
+
+    const message = `The verification code is: [${user.verification}] for mobile [${req.body.mobile}]
+    this message generated automatically using Slack APIs as a mock sms`;
+    const { sent, error } = await sms(message);
+
     if (error) return next(error);
     return res.json({ mobile: `sms sent to ${req.body.mobile}. sms ID: ${sent}` });
   }
 
   // this method is for admins to get verification numbers
   async getVerificationNumberByMobile(req, res, next) {
-    // validation.
-    const errors = await validate(smsVerification, req.body);
-    if (errors.length) return next({ message: errors, status: 400 });
-    // @TODO making regex validation as phone() validate if number has 9665 only
-    const isPhone = phone(req.body.mobile.toString(), 'SAU');
-    if (!isPhone.length) return next({ message: 'please enter a valid Saudi Arabia mobile number', status: 400 });
+    const validationResult = await validateSchemaAndMobile(smsVerificationSchema, req);
+    if (validationResult.error) return next(validationResult.error);
+
     const verificationKey = await this.User.find({
       where: { mobile: req.body.mobile },
       attributes: ['verification'],
