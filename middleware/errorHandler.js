@@ -12,7 +12,7 @@ process.on('unhandledRejection', (err) => {
 });
 
 process.on('uncaughtException', (err) => {
-  logger.error(JSON.stringify(err));
+  // logger.error(JSON.stringify(err));
   let error = {
     time: new Date(),
     type: 'expection',
@@ -32,7 +32,7 @@ process.on('uncaughtException', (err) => {
 });
 
 module.exports = (err, req, res, next) => {
-  logger.error(JSON.stringify(err));
+  // logger.error(JSON.stringify(err));
   if (err.name === 'TokenExpiredError') {
     err.status = 403;
     err.message = `your session has been expired at ${err.expiredAt}`;
