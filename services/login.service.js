@@ -31,7 +31,7 @@ async function signIn(reqBody, res) {
   };
   const errors = validate(LoginSchema, reqBody);
   if (errors.length) {
-    results.error = errors;
+    results.error = { message: errors, status: 400 };
     return results;
   }
 
@@ -47,7 +47,7 @@ async function signIn(reqBody, res) {
 
   const match = await bcrypt.compare(reqBody.password, user.password);
   if (!match) {
-    const err = { message: 'the entered mobile or password is invalid!', status: 500 };
+    const err = { message: 'the entered mobile or password is invalid!', status: 422 };
     results.error = err;
     return results;
   }
@@ -55,16 +55,6 @@ async function signIn(reqBody, res) {
   const token = await tokenGenerator(signOptions);
   results.token = token;
   results.user = signOptions;
-  logger.debug(`User is ${JSON.stringify(user)} verification Status ${user.verified}`);
-  if (!user.verified) {
-    const verificationKey = randomString.generate({
-      length: 6,
-      charset: 'numeric',
-    });
-    logger.debug(`Your Verification Code is ${verificationKey}`);
-    res.locals.verificationKey = verificationKey;
-    // @TODO saving verificationKey to DB
-  }
   return results;
 }
 
