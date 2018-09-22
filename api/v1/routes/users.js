@@ -14,9 +14,16 @@ router.get('/id/:id', isAuthorized, verificationMiddleware, UserController.getUs
 
 router.post('/register', UserController.create.bind(UserController));
 
+router.post('/verify', UserController.getVerified.bind(UserController));
+
+router.post('/verification/sms', isAuthorized, UserController.sendSmsVerification.bind(UserController));
+
+router.post('/verification/number/by/mobile', isAuthorized, UserController.getVerificationNumberByMobile.bind(UserController));
+
 router.delete('/delete/id/:id', isAuthorized, verificationMiddleware, UserController.deleteUser.bind(UserController));
 
 router.delete('/delete/mobile/:mobile', isAuthorized, verificationMiddleware, UserController.deleteUser.bind(UserController));
+
 
 // router.put('/id/:id', UserController.update.bind(UserController));
 
