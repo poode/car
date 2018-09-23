@@ -19,7 +19,7 @@ router.post('/register', UserController.create.bind(UserController));
 router.post('/verify', UserController.getVerified.bind(UserController));
 
 // this endpoint to send sms to requested mobile number which was registered
-router.post('/verification/sms', isAuthorized, UserController.sendSmsVerification.bind(UserController));
+router.post('/verification/sms', UserController.sendSmsVerification.bind(UserController));
 
 // this endpoint for admins @TODO adding admin middleware employee middleware user middleware
 router.post('/get/verification/number/by/mobile', isAuthorized, UserController.getVerificationNumberByMobile.bind(UserController));
