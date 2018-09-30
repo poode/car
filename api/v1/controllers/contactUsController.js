@@ -3,7 +3,7 @@ const { saveMedia } = require('../../../util/helpers/upload');
 const { contactUs, user, contactUsReason } = require('../../../config/db').db;
 
 async function index(req, res) {
-  // slow query
+  // slow query as it takes 1 to 2 sec. 
   // const contactUsShow = await contactUs.findAll({
   //   include: [
   //     {
@@ -17,6 +17,7 @@ async function index(req, res) {
   //   ],
   //   attributes: ['body', 'imageOrVideo'],
   // });
+  // faster query 
   const contactUsShow = [];
   await contactUs.findAll().map(async (oneContactUs) => {
     const userFound = await user.find({
