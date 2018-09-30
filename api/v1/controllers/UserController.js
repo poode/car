@@ -75,7 +75,7 @@ class UserController {
 
     if (!user) return next({ message: `mobile number ${req.body.mobile} is not in our database`, status: 404 });
 
-    if (user.verified) return next({ message: `mobile number ${req.body.mobile} is already verifed`, status: 422 });
+    if (user.verified) return next({ message: `mobile number ${req.body.mobile} is already verified`, status: 422 });
 
     const message = `The verification code is: [${user.verification}] for mobile [${req.body.mobile}]
     this message generated automatically using Slack APIs as a mock sms`;
