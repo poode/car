@@ -4,8 +4,7 @@ const _ = require('lodash');
 
 const { validate } = require('../util/helpers/validation');
 const LoginSchema = require('../api/v1/schema/login.json');
-const { User } = require('../api/v1/models/user');
-const { logger } = require('../config/logger');
+const { user } = require('../config/db').db;
 
 /**
  *
@@ -33,23 +32,23 @@ async function signIn(reqBody) {
     return results;
   }
 
-  const user = await User.findOne({
+  const userFound = await user.findOne({
     where: { mobile: reqBody.mobile },
     attributes: ['id', 'username', 'password', 'mobile', 'email', 'verified', 'createdAt', 'updatedAt'],
   });
-  if (!user) {
+  if (!userFound) {
     const err = { message: 'this mobile is not found in our databases', status: 404 };
     results.error = err;
     return results;
   }
 
-  const match = await bcrypt.compare(reqBody.password, user.password);
+  const match = await bcrypt.compare(reqBody.password, userFound.password);
   if (!match) {
     const err = { message: 'the entered mobile or password is invalid!', status: 422 };
     results.error = err;
     return results;
   }
-  const signOptions = _.pick(user, ['id', 'username', 'mobile', 'verified']);
+  const signOptions = _.pick(userFound, ['id', 'username', 'mobile', 'verified']);
   const token = await tokenGenerator(signOptions);
   results.token = token;
   results.user = signOptions;

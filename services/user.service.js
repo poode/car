@@ -58,7 +58,7 @@ async function returnAllUsers(userModel) {
 async function findUserByIdOrMobile(model, req) {
   const results = {
     error: '',
-    user: '',
+    userFound: '',
   };
   const whereObject = {};
   if (req.path.includes('id')) {
@@ -71,8 +71,8 @@ async function findUserByIdOrMobile(model, req) {
     where: whereObject,
     attributes: ['id', 'username', 'email', 'mobile', 'verified', 'createdAt', 'updatedAt'],
   });
-  if (!user) results.error = { message: 'no user found with given id', status: 404 };
-  results.user = user;
+  if (!user) results.error = { message: 'no user found with given id/Mobile', status: 404 };
+  results.userFound = user;
   return results;
 }
 
@@ -103,7 +103,7 @@ async function limitedUsers(model, req) {
 async function RegisterUser(model, req) {
   const results = {
     error: '',
-    user: '',
+    userFound: '',
   };
 
   // hashing password before saving to database.
@@ -126,7 +126,7 @@ async function RegisterUser(model, req) {
     results.error = { message: 'mobile number already exists, forgot your password?', status: 409 };
     return results;
   }
-  results.user = await getUserByMobile(model, modelInstance.mobile);
+  results.userFound = await getUserByMobile(model, modelInstance.mobile);
   return results;
 }
 
@@ -152,7 +152,7 @@ async function findUserByIdOrMobileAndDelete(model, req) {
   const user = await model.destroy({
     where: whereObject,
   });
-  if (!user) results.error = { message: 'no user found with given ID', status: 404 };
+  if (!user) results.error = { message: 'no user found with given ID/Mobile', status: 404 };
   results.user = user;
   return results;
 }
@@ -166,7 +166,7 @@ async function findUserByIdOrMobileAndDelete(model, req) {
  */
 async function verifyUser(model, req) {
   const result = {
-    user: '',
+    userFound: '',
     error: '',
   };
   const user = await model.find({
@@ -188,7 +188,7 @@ async function verifyUser(model, req) {
   const updatedUser = await model.find({
     where: { mobile: req.body.mobile },
   });
-  result.user = _.pick(updatedUser, ['id', 'username', 'mobile', 'verified']);
+  result.userFound = _.pick(updatedUser, ['id', 'username', 'mobile', 'verified']);
   return result;
 }
 

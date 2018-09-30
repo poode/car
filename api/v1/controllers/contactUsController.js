@@ -1,25 +1,37 @@
 const { saveMedia } = require('../../../util/helpers/upload');
 
-const { ContactUs } = require('../models/contactUs');
-const { User } = require('../models/user');
-const { ContactUsReason } = require('../models/contactUsReason');
+const { contactUs, user, contactUsReason } = require('../../../config/db').db;
 
 async function index(req, res) {
+  // slow query
+  // const contactUsShow = await contactUs.findAll({
+  //   include: [
+  //     {
+  //       model: user,
+  //       attributes: ['username', 'mobile'],
+  //     },
+  //     {
+  //       model: contactUsReason,
+  //       attributes: ['reasonType'],
+  //     },
+  //   ],
+  //   attributes: ['body', 'imageOrVideo'],
+  // });
   const contactUsShow = [];
-  await ContactUs.findAll().map(async (oneContactUs) => {
-    const user = await User.find({
+  await contactUs.findAll().map(async (oneContactUs) => {
+    const userFound = await user.find({
       where: { id: oneContactUs.userId },
       attributes: ['username', 'mobile'],
     });
-    const contactReason = await ContactUsReason.find({
+    const contactReason = await contactUsReason.find({
       where: { id: oneContactUs.contactUsReasonTypeId },
       attributes: ['reasonType'],
     });
     contactUsShow.push({
-      username: user.username,
+      username: userFound.username,
+      mobile: userFound.mobile,
       ContactUsReason: contactReason.reasonType,
       body: oneContactUs.body,
-      mobile: user.mobile,
     });
   });
 
@@ -34,7 +46,7 @@ async function postContactUs(req, res, next) {
   if (!uploaded) {
     return next({ message: 'failed in uploading attachment', status: 500 });
   }
-  const createdContactUs = await ContactUs.create({
+  const createdContactUs = await contactUs.create({
     contactUsReasonTypeId: req.body.contactUsReasonTypeId,
     body: req.body.body,
     imageOrVideo: req.file ? req.file.path : null,

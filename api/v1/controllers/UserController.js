@@ -8,7 +8,7 @@ const {
   validateSchemaAndMobile,
 } = require('../../../services/user.service');
 
-const { User } = require('../models/user');
+const { user } = require('../../../config/db').db;
 const jsonUserSchema = require('../schema/user.json');
 const verificationSchema = require('../schema/verification.json');
 const smsVerificationSchema = require('../schema/smsVerificationSchema.json');
@@ -21,7 +21,7 @@ class UserController {
    * @param DBModel User
    */
   constructor() {
-    this.User = User;
+    this.User = user;
   }
 
   async index(req, res) {
@@ -41,43 +41,43 @@ class UserController {
       const error = { message: 'please enter valid number', status: 400 };
       return next(error);
     }
-    const { user, error } = await findUserByIdOrMobile(this.User, req);
+    const { userFound, error } = await findUserByIdOrMobile(this.User, req);
     if (error) return next(error);
-    return res.json(user);
+    return res.json(userFound);
   }
 
   async create(req, res, next) {
     const validationResult = await validateSchemaAndMobile(jsonUserSchema, req);
     if (validationResult.error) return next(validationResult.error);
 
-    const { error, user } = await RegisterUser(this.User, req);
+    const { error, userFound } = await RegisterUser(this.User, req);
     if (error) return next(error);
-    return res.json(user);
+    return res.json(userFound);
   }
 
   async getVerified(req, res, next) {
     const validationResult = await validateSchemaAndMobile(verificationSchema, req);
     if (validationResult.error) return next(validationResult.error);
 
-    const { error, user } = await verifyUser(this.User, req);
+    const { error, userFound } = await verifyUser(this.User, req);
     if (error) return next(error);
-    return res.json({ verified: true, user });
+    return res.json({ verified: true, userFound });
   }
 
   async sendSmsVerification(req, res, next) {
     const validationResult = await validateSchemaAndMobile(smsVerificationSchema, req);
     if (validationResult.error) return next(validationResult.error);
 
-    const user = await this.User.find({
+    const userFound = await this.User.find({
       where: { mobile: req.body.mobile },
       attributes: ['verification', 'verified'],
     });
 
-    if (!user) return next({ message: `mobile number ${req.body.mobile} is not in our database`, status: 404 });
+    if (!userFound) return next({ message: `mobile number ${req.body.mobile} is not in our database`, status: 404 });
 
-    if (user.verified) return next({ message: `mobile number ${req.body.mobile} is already verified`, status: 422 });
+    if (userFound.verified) return next({ message: `mobile number ${req.body.mobile} is already verified`, status: 422 });
 
-    const message = `The verification code is: [${user.verification}] for mobile [${req.body.mobile}]
+    const message = `The verification code is: [${userFound.verification}] for mobile [${req.body.mobile}]
     this message generated automatically using Slack APIs as a mock sms`;
     const { sent, error } = await sms(message);
 
