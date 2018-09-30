@@ -1,6 +1,6 @@
 /* jshint indent: 2 */
 
-module.exports = (sequelize, DataTypes) => sequelize.define('users', {
+module.exports = (sequelize, DataTypes) => sequelize.define('user', {
   id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,

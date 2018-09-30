@@ -1,33 +1,25 @@
-const Sequelize = require('sequelize');
+// /* jshint indent: 2 */
 
-const { db } = require('../../../config/db');
-
-
-const ContactUsReason = db.define('LTContactUsReasonTypes', {
+module.exports = (sequelize, DataTypes) => sequelize.define('contactUsReason', {
   id: {
-    type: Sequelize.INTEGER(11),
+    type: DataTypes.INTEGER(11),
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
   reasonType: {
-    type: Sequelize.STRING(255),
+    type: DataTypes.STRING(255),
     allowNull: false,
     unique: true,
   },
   createdAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
   updatedAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
 }, {
   tableName: 'LTContactUsReasonTypes',
 });
-
-
-module.exports = {
-  ContactUsReason,
-};

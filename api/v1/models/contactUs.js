@@ -1,62 +1,42 @@
-const Sequelize = require('sequelize');
-
-const { db } = require('../../../config/db');
-const { User } = require('../models/user');
-
-const ContactUs = db.define('contactUs', {
+module.exports = (sequelize, DataTypes) => sequelize.define('contactUs', {
   id: {
-    type: Sequelize.INTEGER(11),
+    type: DataTypes.INTEGER(11),
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
   contactUsReasonTypeId: {
-    type: Sequelize.INTEGER(11),
+    type: DataTypes.INTEGER(11),
     allowNull: false,
     references: {
-      model: 'LTContactUsReasonTypes',
+      model: 'contactUsReason',
       key: 'id',
     },
   },
   body: {
-    type: Sequelize.TEXT,
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   imageOrVideo: {
-    type: Sequelize.STRING(255),
+    type: DataTypes.STRING(255),
     allowNull: true,
   },
   userId: {
-    type: Sequelize.INTEGER(11),
+    type: DataTypes.INTEGER(11),
     allowNull: false,
     references: {
-      model: 'users',
+      model: 'user',
       key: 'id',
     },
   },
   createdAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
   updatedAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
-
-},
-{
-  underscored: false,
-},
-{
+}, {
   tableName: 'contactUs',
-  classMethods: {
-    associate() {
-      ContactUs.belongsTo(User);
-    },
-  },
 });
-
-
-module.exports = {
-  ContactUs,
-};

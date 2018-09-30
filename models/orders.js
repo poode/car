@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('orders', {
     type: DataTypes.INTEGER(11),
     allowNull: false,
     references: {
-      model: 'users',
+      model: 'user',
       key: 'id',
     },
   },
@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('orders', {
     type: DataTypes.INTEGER(11),
     allowNull: true,
     references: {
-      model: 'users',
+      model: 'user',
       key: 'id',
     },
   },

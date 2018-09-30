@@ -1,5 +1,3 @@
-/* jshint indent: 2 */
-
 module.exports = (sequelize, DataTypes) => sequelize.define('contactUs', {
   id: {
     type: DataTypes.INTEGER(11),
@@ -11,7 +9,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('contactUs', {
     type: DataTypes.INTEGER(11),
     allowNull: false,
     references: {
-      model: 'LT_contactUsReasonTypes',
+      model: 'LTContactUsReasonTypes',
       key: 'id',
     },
   },
@@ -27,7 +25,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('contactUs', {
     type: DataTypes.INTEGER(11),
     allowNull: false,
     references: {
-      model: 'users',
+      model: 'user',
       key: 'id',
     },
   },

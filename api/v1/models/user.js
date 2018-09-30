@@ -1,60 +1,46 @@
-const Sequelize = require('sequelize');
+// /* jshint indent: 2 */
 
-const { db } = require('../../../config/db');
-const { ContactUs } = require('./contactUs');
-
-const User = db.define('users', {
+module.exports = (sequelize, DataTypes) => sequelize.define('user', {
   id: {
-    type: Sequelize.INTEGER(11),
+    type: DataTypes.INTEGER(11),
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
   username: {
-    type: Sequelize.STRING(255),
+    type: DataTypes.STRING(255),
     allowNull: false,
   },
   email: {
-    type: Sequelize.STRING(255),
+    type: DataTypes.STRING(255),
     allowNull: true,
   },
   password: {
-    type: Sequelize.STRING(255),
+    type: DataTypes.STRING(255),
     allowNull: false,
   },
   mobile: {
-    type: Sequelize.STRING(255),
+    type: DataTypes.STRING(255),
     allowNull: false,
     primaryKey: true,
   },
   verified: {
-    type: Sequelize.INTEGER(1),
+    type: DataTypes.INTEGER(1),
     allowNull: false,
     defaultValue: '0',
   },
   verification: {
-    type: Sequelize.INTEGER(11),
-    allowNull: true,
+    type: DataTypes.INTEGER(11),
+    allowNull: false,
   },
   createdAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
   updatedAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
-
-},
-{
-  classMethods: {
-    associate() {
-      User.hasMany(ContactUs);
-    },
-  },
+}, {
+  tableName: 'users',
 });
-
-
-module.exports = {
-  User,
-};
