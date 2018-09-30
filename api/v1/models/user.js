@@ -45,6 +45,9 @@ function userModel(sequelize, DataTypes) {
       allowNull: true,
     },
 
+  },
+  {
+    underscored: false,
   });
 }
 
