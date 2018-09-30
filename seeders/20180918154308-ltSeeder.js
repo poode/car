@@ -32,10 +32,10 @@ module.exports = {
       { carType: 'Convertible' },
     ];
 
-    queryInterface.bulkInsert('LT_roleTypes', LTRoleTypes);
-    queryInterface.bulkInsert('LT_permissionTypes', permissionTypes);
-    queryInterface.bulkInsert('LT_contactUsReasonTypes', reasonTypes);
-    return queryInterface.bulkInsert('LT_carTypes', carTypes);
+    queryInterface.bulkInsert('LTRoleTypes', LTRoleTypes);
+    queryInterface.bulkInsert('LTPermissionTypes', permissionTypes);
+    queryInterface.bulkInsert('LTContactUsReasonTypes', reasonTypes);
+    return queryInterface.bulkInsert('LTCarTypes', carTypes);
   },
 
   down: (queryInterface, Sequelize) => {
@@ -45,9 +45,9 @@ module.exports = {
 
       Example:
       */
-    queryInterface.bulkDelete('LT_roleTypes', null, {});
-    queryInterface.bulkInsert('LT_permissionTypes', null, {});
-    queryInterface.bulkInsert('LT_contactUsReasonTypes', null, {});
-    return queryInterface.bulkInsert('LT_carTypes', null, {});
+    queryInterface.bulkDelete('LTRoleTypes', null, {});
+    queryInterface.bulkInsert('LTPermissionTypes', null, {});
+    queryInterface.bulkInsert('LTContactUsReasonTypes', null, {});
+    return queryInterface.bulkInsert('LTCarTypes', null, {});
   },
 };
