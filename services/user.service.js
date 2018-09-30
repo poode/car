@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
-const randomString = require('randomstring');
+const randomString = require('randomatic');
 const phone = require('phone');
 
 const { pagination } = require('../util/PaginationUtil/pagination');
@@ -109,16 +109,7 @@ async function RegisterUser(model, req) {
   // hashing password before saving to database.
   const hashedPassword = await bcryptPassword(req.body.password);
   // generate verificationKey
-  let verificationKey = randomString.generate({
-    length: 6,
-    charset: 'numeric',
-  });
-  if (verificationKey.length !== 6) {
-    verificationKey = randomString.generate({
-      length: 6,
-      charset: 'numeric',
-    });
-  }
+  const verificationKey = randomString('0', 6);
   // find user by mobile if not found create it.
   const options = {
     where: { mobile: req.body.mobile },

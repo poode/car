@@ -6,9 +6,9 @@
 
 const fs = require('fs');
 const path = require('path');
-const randomstring = require('randomstring');
+const randomString = require('randomatic');
 
-const randomKey = randomstring.generate(64);
+const randomKey = randomString('A0', 64);
 
 const key = Buffer.from(randomKey).toString('base64');
 
