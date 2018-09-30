@@ -1,6 +1,6 @@
 /* jshint indent: 2 */
 
-module.exports = (sequelize, DataTypes) => sequelize.define('LT_serviceTypes', {
+module.exports = (sequelize, DataTypes) => sequelize.define('LTServiceTypes', {
   id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
@@ -29,5 +29,5 @@ module.exports = (sequelize, DataTypes) => sequelize.define('LT_serviceTypes', {
     allowNull: true,
   },
 }, {
-  tableName: 'LT_serviceTypes',
+  tableName: 'LTServiceTypes',
 });

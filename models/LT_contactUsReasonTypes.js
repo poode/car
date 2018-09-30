@@ -1,6 +1,6 @@
 /* jshint indent: 2 */
 
-module.exports = (sequelize, DataTypes) => sequelize.define('LT_contactUsReasonTypes', {
+module.exports = (sequelize, DataTypes) => sequelize.define('LTContactUsReasonTypes', {
   id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
@@ -21,5 +21,5 @@ module.exports = (sequelize, DataTypes) => sequelize.define('LT_contactUsReasonT
     allowNull: true,
   },
 }, {
-  tableName: 'LT_contactUsReasonTypes',
+  tableName: 'LTContactUsReasonTypes',
 });

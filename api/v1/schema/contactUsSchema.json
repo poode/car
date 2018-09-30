@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "required": ["contactUsReasonTypeId", "body", "userId"],
+  "uniqueItemProperties": ["userId"],
+  "properties": {
+    "userId": {
+      "type": "number",
+      "maxLength": 255
+    },
+    "body": {
+      "type": "string",
+      "minLength": 255
+    },
+    "contactUsReasonTypeId": {
+      "type": "number",
+      "maxLength": 255
+    }
+  }
+}

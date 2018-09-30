@@ -1,6 +1,6 @@
 /* jshint indent: 2 */
 
-module.exports = (sequelize, DataTypes) => sequelize.define('LT_endOrderReasonTypes', {
+module.exports = (sequelize, DataTypes) => sequelize.define('LTEndOrderReasonTypes', {
   id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
@@ -20,5 +20,5 @@ module.exports = (sequelize, DataTypes) => sequelize.define('LT_endOrderReasonTy
     allowNull: true,
   },
 }, {
-  tableName: 'LT_endOrderReasonTypes',
+  tableName: 'LTEndOrderReasonTypes',
 });

@@ -1,40 +1,38 @@
 const Sequelize = require('sequelize');
 
 const { db } = require('../../../config/db');
-const { ContactUs } = require('./contactUs');
+const { User } = require('../models/user');
 
-const User = db.define('users', {
+const ContactUs = db.define('contactUs', {
   id: {
     type: Sequelize.INTEGER(11),
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
-  username: {
-    type: Sequelize.STRING(255),
-    allowNull: false,
-  },
-  email: {
-    type: Sequelize.STRING(255),
-    allowNull: true,
-  },
-  password: {
-    type: Sequelize.STRING(255),
-    allowNull: false,
-  },
-  mobile: {
-    type: Sequelize.STRING(255),
-    allowNull: false,
-    primaryKey: true,
-  },
-  verified: {
-    type: Sequelize.INTEGER(1),
-    allowNull: false,
-    defaultValue: '0',
-  },
-  verification: {
+  contactUsReasonTypeId: {
     type: Sequelize.INTEGER(11),
+    allowNull: false,
+    references: {
+      model: 'LTContactUsReasonTypes',
+      key: 'id',
+    },
+  },
+  body: {
+    type: Sequelize.TEXT,
+    allowNull: false,
+  },
+  imageOrVideo: {
+    type: Sequelize.STRING(255),
     allowNull: true,
+  },
+  userId: {
+    type: Sequelize.INTEGER(11),
+    allowNull: false,
+    references: {
+      model: 'users',
+      key: 'id',
+    },
   },
   createdAt: {
     type: Sequelize.DATE,
@@ -47,14 +45,18 @@ const User = db.define('users', {
 
 },
 {
+  underscored: false,
+},
+{
+  tableName: 'contactUs',
   classMethods: {
     associate() {
-      User.hasMany(ContactUs);
+      ContactUs.belongsTo(User);
     },
   },
 });
 
 
 module.exports = {
-  User,
+  ContactUs,
 };
