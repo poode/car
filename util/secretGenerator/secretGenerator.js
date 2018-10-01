@@ -8,8 +8,8 @@ const fs = require('fs');
 const path = require('path');
 const randomString = require('randomatic');
 
-const randomKey = randomString('A0', 64);
-
+const randomKey = randomString('a0', 64);
+console.log(randomKey);
 const key = Buffer.from(randomKey).toString('base64');
 
 const file = path.resolve(process.cwd(), '.env');
@@ -18,7 +18,8 @@ fs.readFile(file, 'utf8', (err, data) => {
   if (err) {
     return console.log(err);
   }
-  const result = data.replace(/'key'/g, key);
+  console.log(data);
+  const result = data.replace(/key/g, key);
 
   fs.writeFile(file, result, 'utf8', (error) => {
     if (error) return console.log(error);
