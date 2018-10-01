@@ -1,9 +1,9 @@
-const { saveMedia } = require('../../../util/helpers/upload');
+const path = require('path');
 
 const { contactUs, user, contactUsReason } = require('../../../config/db').db;
 
 async function index(req, res) {
-  // slow query as it takes 1 to 2 sec. 
+  // slow query as it takes 1 to 2 sec.
   // const contactUsShow = await contactUs.findAll({
   //   include: [
   //     {
@@ -17,7 +17,8 @@ async function index(req, res) {
   //   ],
   //   attributes: ['body', 'imageOrVideo'],
   // });
-  // faster query 
+
+  // faster query
   const contactUsShow = [];
   await contactUs.findAll().map(async (oneContactUs) => {
     const userFound = await user.find({
@@ -39,14 +40,22 @@ async function index(req, res) {
   res.json(contactUsShow);
 }
 
+// this function will use form-data header not raw header as no json will be posted
+async function uploadPhoto(req, res, next) {
+  const file = req.files;
+  const imageData = {
+    originalName: file.originalname,
+    mimeType: file.mimetype,
+    path: `http://${req.hostname}:${process.env.PORT}/static/${file.filename}`,
+    filename: file.filename,
+    size: file.size,
+  };
+  res.json(imageData);
+}
+
 async function postContactUs(req, res, next) {
   // @TODO validation
   // @TODO return result or error from uploading image
-  const { uploaded, error } = await saveMedia(req);
-  if (error) return next(error);
-  if (!uploaded) {
-    return next({ message: 'failed in uploading attachment', status: 500 });
-  }
   const createdContactUs = await contactUs.create({
     contactUsReasonTypeId: req.body.contactUsReasonTypeId,
     body: req.body.body,
@@ -59,4 +68,5 @@ async function postContactUs(req, res, next) {
 module.exports = {
   index,
   postContactUs,
+  uploadPhoto,
 };
