@@ -26,7 +26,7 @@ const logger = winston.createLogger({
     }),
     new winston.transports.File({ filename: 'combined.log' }),
     new winston.transports.Console({
-      handleExceptions: false,
+      handleExceptions: true,
       prettyPrint: true,
       humanReadableUnhandledException: true,
     }),
