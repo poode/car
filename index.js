@@ -7,6 +7,7 @@ const { logger } = require('./config/logger');
 
 const app = express();
 app.use(express.json());
+app.use('/static', express.static(process.env.UPLOAD_FOLDER));
 
 require('./startup/routes')(app);
 
