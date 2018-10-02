@@ -1,5 +1,6 @@
 async function pagination(model, req) {
-  const limit = Number(req.params.limit); // number of records per page
+  let limit = Number(req.params.limit); // number of records per page
+  limit = limit > 50 ? 10 : limit;
   let offset = 0;
   const { count } = await model.findAndCountAll();
   let page = Number(req.params.page);
