@@ -25,8 +25,8 @@ module.exports = (app) => {
   app.use('/api/v1/login', login);
   app.use('/api/v1/users', users);
   app.use(isAuthorized);
-  app.use('/api/v1/contact-us', contactUs);
   app.use(verificationMiddleware);
+  app.use('/api/v1/contact-us', contactUs);
   app.use(new RateLimiter(15, 100).limiter);
   app.use('*', notFound);
   app.use(errorHandler);
