@@ -33,7 +33,7 @@ CREATE TABLE `contactUs` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`contactUsReasonTypeId` INT NOT NULL,
 	`body` TEXT NOT NULL,
-	`imageOrVideo` VARCHAR(255),
+	`imageOrVideoPath` VARCHAR(255),
 	`userId` INT NOT NULL,
 	`createdAt` DATETIME,
 	`updatedAt` DATETIME,
