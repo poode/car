@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('contactUs', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  imageOrVideo: {
+  imageOrVideoPath: {
     type: DataTypes.STRING(255),
     allowNull: true,
   },
