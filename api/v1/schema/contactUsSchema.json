@@ -9,11 +9,15 @@
     },
     "body": {
       "type": "string",
-      "minLength": 255
+      "maxLength": 500
     },
     "contactUsReasonTypeId": {
       "type": "number",
       "maxLength": 255
+    },
+    "path": {
+      "type": "string",
+      "maxLength": 400
     }
   }
 }
