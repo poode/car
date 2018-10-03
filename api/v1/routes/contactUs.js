@@ -1,9 +1,9 @@
 const router = require('express-promise-router')();
 const { upload } = require('../../../middleware/upload');
 
-const { index, uploadPhoto, contactUsLimited } = require('../controllers/contactUsController');
+const { index, postContactUs, contactUsLimited } = require('../controllers/contactUsController');
 
-router.post('/', upload, uploadPhoto);
+router.post('/', upload, postContactUs);
 
 router.get('/', index);
 
