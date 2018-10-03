@@ -29,6 +29,11 @@ module.exports = (sequelize, DataTypes) => sequelize.define('contactUs', {
       key: 'id',
     },
   },
+  status: {
+    type: DataTypes.INTEGER(1),
+    allowNull: false,
+    defaultValue: '0',
+  },
   createdAt: {
     type: DataTypes.DATE,
     allowNull: true,
