@@ -1,23 +1,14 @@
 {
   "type": "object",
-  "required": ["contactUsReasonTypeId", "body", "userId"],
-  "uniqueItemProperties": ["userId"],
+  "required": ["body", "contactUsReasonTypeId"],
   "properties": {
-    "userId": {
-      "type": "number",
-      "maxLength": 255
-    },
     "body": {
       "type": "string",
       "maxLength": 500
     },
     "contactUsReasonTypeId": {
       "type": "number",
-      "maxLength": 255
-    },
-    "path": {
-      "type": "string",
-      "maxLength": 400
+      "minimum": 1
     }
   }
 }
