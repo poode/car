@@ -35,6 +35,7 @@ CREATE TABLE `contactUs` (
 	`body` TEXT NOT NULL,
 	`imageOrVideoPath` VARCHAR(255),
 	`userId` INT NOT NULL,
+	`status` BOOLEAN NOT NULL DEFAULT false,
 	`createdAt` DATETIME,
 	`updatedAt` DATETIME,
 	PRIMARY KEY (`id`)
