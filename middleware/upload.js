@@ -25,9 +25,9 @@ const upload = multer({
       return callback(null, file);
     }
     if (!size) {
-      return callback({ message: 'File uploaded is too large, accepts only 10 M max size', status: 412 });
+      return callback({ message: 'File uploaded is too large, accepts only 10 M max size', status: 415 });
     }
-    return callback({ message: `File upload only supports the following filetypes - ${filetypes}`, status: 412 });
+    return callback({ message: `File upload only supports the following filetypes - ${filetypes}`, status: 415 });
   },
 }).single('file');
 
