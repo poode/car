@@ -15,8 +15,8 @@ async function limitedContactUs(model, req) {
     return results;
   }
 
-  const contactUsShow = [];
-  paginated.result.map(async (singleContactUs) => {
+  // Promise.all() is very cool to handle promise inside map()
+  const contactUsShow = await Promise.all(paginated.result.map(async (singleContactUs) => {
     const userFound = await user.find({
       where: { id: singleContactUs.userId },
       attributes: ['username', 'mobile'],
@@ -27,22 +27,26 @@ async function limitedContactUs(model, req) {
       attributes: ['reasonType'],
     });
 
-    contactUsShow.push({
-      username: userFound.username,
-      mobile: userFound.mobile,
-      ContactUsReason: contactReason.reasonType,
+    return {
       body: singleContactUs.body,
-      filePath: singleContactUs.imageOrVideoPath,
-    });
-  });
-  // @TODO pick results and wait for them
+      imageOrVideoPath: singleContactUs.imageOrVideoPath,
+      user: {
+        username: userFound.username,
+        mobile: userFound.mobile,
+      },
+      contactUsReason: {
+        reasonType: contactReason.reasonType,
+      },
+    };
+  }));
+
   const picked = {
     list: contactUsShow,
     count: paginated.count,
     pages: paginated.pages,
   };
 
-  results.result = picked;
+  results.result = await picked;
   return results;
 }
 
