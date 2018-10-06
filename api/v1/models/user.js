@@ -29,6 +29,11 @@ module.exports = (sequelize, DataTypes) => sequelize.define('user', {
     allowNull: false,
     defaultValue: '0',
   },
+  resetPassword: {
+    type: DataTypes.INTEGER(1),
+    allowNull: false,
+    defaultValue: '0',
+  },
   verification: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
