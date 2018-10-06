@@ -77,7 +77,7 @@ class UserController {
 
     if (userFound.verified) return next({ message: `mobile number ${req.body.mobile} is already verified`, status: 422 });
 
-    const message = `The verification code is: [${userFound.verification}] for mobile [${req.body.mobile}]
+    const message = `(verify User) The verification code is: [${userFound.verification}] for mobile [${req.body.mobile}]
     this message generated automatically using Slack APIs as a mock sms`;
     const { sent, error } = await sms(message);
 
@@ -87,8 +87,8 @@ class UserController {
 
   // this method is for admins to get verification numbers
   async getVerificationNumberByMobile(req, res, next) {
-    const validationResult = await validateSchemaAndMobile(smsVerificationSchema, req);
-    if (validationResult.error) return next(validationResult.error);
+    const { error } = await validateSchemaAndMobile(smsVerificationSchema, req);
+    if (error) return next(error);
 
     const verificationKey = await this.User.find({
       where: { mobile: req.body.mobile },
