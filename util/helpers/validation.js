@@ -38,9 +38,11 @@ function validateMobileOrId(reqParam, req) {
   let { id, mobile } = reqParam;
   id = parseInt(id, 0);
   mobile = parseInt(mobile, 0);
+
   if ((req.params.id && !isNumber(id)) || (req.params.mobile && !isNumber(mobile))) {
     return false;
   }
+
   if (mobile) {
     const mobileSAPattern = /((^9665[0345689])(\d{7}$))|((^96657([012678])(\d{6}$)))/;
     const isValidMobile = mobileSAPattern.test(mobile);
