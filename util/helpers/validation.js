@@ -1,6 +1,5 @@
 const Ajv = require('ajv');
 const isNumber = require('is-number');
-const phone = require('phone');
 const localize = require('ajv-i18n');
 const _ = require('lodash');
 
