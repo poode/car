@@ -5,8 +5,9 @@ const {
   RegisterUser,
   findUserByIdOrMobileAndDelete,
   verifyUser,
-  validateSchemaAndMobile,
 } = require('../../../services/user.service');
+
+const { validateSchemaAndMobile } = require('../../../util/helpers/validation');
 
 const { user } = require('../../../config/db').db;
 const jsonUserSchema = require('../schema/user.json');
@@ -48,7 +49,7 @@ class UserController {
 
   async create(req, res, next) {
     const validationResult = await validateSchemaAndMobile(jsonUserSchema, req);
-    if (validationResult.error) return next(validationResult.error);
+    if (validationResult.errorFound) return next(validationResult.errorFound);
 
     const { error, userFound } = await RegisterUser(this.User, req);
     if (error) return next(error);
@@ -57,7 +58,7 @@ class UserController {
 
   async getVerified(req, res, next) {
     const validationResult = await validateSchemaAndMobile(verificationSchema, req);
-    if (validationResult.error) return next(validationResult.error);
+    if (validationResult.errorFound) return next(validationResult.errorFound);
 
     const { error, userFound } = await verifyUser(this.User, req);
     if (error) return next(error);
@@ -66,7 +67,7 @@ class UserController {
 
   async sendSmsVerification(req, res, next) {
     const validationResult = await validateSchemaAndMobile(smsVerificationSchema, req);
-    if (validationResult.error) return next(validationResult.error);
+    if (validationResult.errorFound) return next(validationResult.errorFound);
 
     const userFound = await this.User.find({
       where: { mobile: req.body.mobile },
@@ -87,8 +88,8 @@ class UserController {
 
   // this method is for admins to get verification numbers
   async getVerificationNumberByMobile(req, res, next) {
-    const { error } = await validateSchemaAndMobile(smsVerificationSchema, req);
-    if (error) return next(error);
+    const { errorFound } = await validateSchemaAndMobile(smsVerificationSchema, req);
+    if (errorFound) return next(errorFound);
 
     const verificationKey = await this.User.find({
       where: { mobile: req.body.mobile },
