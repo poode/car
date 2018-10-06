@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const randomString = require('randomatic');
-const phone = require('phone');
 
 const { pagination } = require('../util/PaginationUtil/pagination');
 const { findOrCreate } = require('../util/helpers/ormFunctions');
@@ -200,6 +199,7 @@ async function verifyUser(model, req) {
  * @returns result with error if not valid input request or valid with true
  */
 async function validateSchemaAndMobile(schema, req) {
+  const mobileSAPattern = /((^9665[0345689])(\d{7}$))|((^96657([012678])(\d{6}$)))/;
   const result = {
     valid: false,
     error: '',
@@ -212,9 +212,8 @@ async function validateSchemaAndMobile(schema, req) {
     return result;
   }
 
-  // @TODO making regex validation as phone() validate if number has 9665 only
-  const isPhone = phone(req.body.mobile.toString(), 'SAU');
-  if (!isPhone.length) {
+  const isPhone = mobileSAPattern.test(req.body.mobile.toString());
+  if (!isPhone) {
     result.error = { message: 'please enter a valid Saudi Arabia mobile number', status: 400 };
     return result;
   }
