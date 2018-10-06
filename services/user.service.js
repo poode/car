@@ -1,21 +1,9 @@
-const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const randomString = require('randomatic');
 
 const { pagination } = require('../util/PaginationUtil/pagination');
 const { findOrCreate } = require('../util/helpers/ormFunctions');
-const { validate } = require('../util/helpers/validation');
-
-/**
- * @param {*} password and plain string
- * @returns {*} hashed password
- */
-async function bcryptPassword(password) {
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(password, salt);
-  return hash;
-}
-
+const { bcryptPassword } = require('../util/helpers/helpers');
 
 /**
  * @param {*} userModel is ORM object
