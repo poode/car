@@ -10,6 +10,7 @@
       },
       "mobile": {
         "type": "string",
+        "pattern": "((^9665[0345689])(\\d{7}$))|((^96657([012678])(\\d{6}$)))",
         "maxLength": 12,
         "minLength": 12,
         "unique": true
