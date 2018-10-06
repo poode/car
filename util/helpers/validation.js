@@ -62,19 +62,20 @@ async function validateSchemaAndMobile(schema, req) {
   const mobileSAPattern = /((^9665[0345689])(\d{7}$))|((^96657([012678])(\d{6}$)))/;
   const result = {
     valid: false,
-    error: '',
+    errorFound: '',
   };
 
   // validation.
   const errors = await validate(schema, req.body);
   if (errors.length) {
-    result.error = { message: errors, status: 400 };
+    result.errorFound = { message: errors, status: 400 };
     return result;
   }
 
   const isValidKSANumber = mobileSAPattern.test(req.body.mobile.toString());
+
   if (!isValidKSANumber) {
-    result.error = { message: 'please enter a valid Saudi Arabia mobile number', status: 400 };
+    result.errorFound = { message: 'please enter a valid Saudi Arabia mobile number', status: 400 };
     return result;
   }
   result.valid = true;
