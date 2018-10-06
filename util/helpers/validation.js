@@ -42,9 +42,9 @@ function validateMobileOrId(reqParam, req) {
     return false;
   }
   if (mobile) {
-    // Country Code for Kingdom of Saudi Arabia is SAU
-    const isPhone = phone(mobile.toString(), 'SAU');
-    if (!isPhone.length) {
+    const mobileSAPattern = /((^9665[0345689])(\d{7}$))|((^96657([012678])(\d{6}$)))/;
+    const isValidMobile = mobileSAPattern.test(mobile);
+    if (!isValidMobile) {
       return false;
     }
   }
