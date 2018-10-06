@@ -1,10 +1,13 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
+const randomString = require('randomatic');
 
-const { validate } = require('../util/helpers/validation');
+const { validate, validateSchemaAndMobile } = require('../util/helpers/validation');
 const LoginSchema = require('../api/v1/schema/login.json');
+const smsVerificationSchema = require('../api/v1/schema/smsVerificationSchema.json');
 const { user } = require('../config/db').db;
+const { sms } = require('../util/sms/sendSMS');
 
 /**
  *
@@ -55,6 +58,47 @@ async function signIn(reqBody) {
   return results;
 }
 
+async function forgotAndSet(req) {
+  const result = {
+    errorMessage: '',
+    successSent: '',
+  };
+
+  const { errorFound } = await validateSchemaAndMobile(smsVerificationSchema, req);
+  if (errorFound) {
+    result.errorMessage = errorFound;
+    return result;
+  }
+
+  const userExist = await user.findOne({
+    where: {
+      mobile: req.body.mobile,
+    },
+  });
+
+  if (!userExist) {
+    result.errorMessage = { message: `The mobile number ${req.body.mobile} does not exist in our databases`, status: 400 };
+    return result;
+  }
+
+  const { mobile } = req.body;
+  const verificationKey = randomString('0', 6);
+  await user.update({
+    verification: verificationKey,
+    resetPassword: true,
+  }, { where: { mobile } });
+  const message = `(reset password) The verification code is: [${verificationKey}] for mobile [${mobile}]
+  this message generated automatically using Slack APIs as a mock sms`;
+  const { sent, error } = await sms(message);
+  if (error) {
+    result.errorMessage = error;
+    return result;
+  }
+  result.successSent = sent;
+  return result;
+}
+
 module.exports = {
   signIn,
+  forgotAndSet,
 };

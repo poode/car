@@ -1,4 +1,4 @@
-const { signIn } = require('../../../services/login.service');
+const { signIn, forgotAndSet } = require('../../../services/login.service');
 
 async function index(req, res, next) {
   const { token, error, user } = await signIn(req.body, res);
@@ -10,6 +10,19 @@ async function index(req, res, next) {
   });
 }
 
+async function forgotPassword(req, res, next) {
+  const { successSent, errorMessage } = await forgotAndSet(req);
+  if (errorMessage) return next(errorMessage);
+  return res.json({ mobile: `${req.body.mobile}`, smsId: `${successSent}` });
+}
+
+async function resetPassword(req, res, next) {
+  const { mobile, verification } = req.body;
+  
+}
+
 module.exports = {
   index,
+  forgotPassword,
+  resetPassword,
 };

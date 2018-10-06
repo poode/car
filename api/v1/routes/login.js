@@ -1,7 +1,8 @@
 const router = require('express-promise-router')();
 
-const { index } = require('../controllers/LoginController');
+const { index, forgotPassword } = require('../controllers/LoginController');
 
 router.post('/', index);
+router.post('/forgot', forgotPassword);
 
 module.exports = router;
