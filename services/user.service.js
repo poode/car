@@ -191,36 +191,6 @@ async function verifyUser(model, req) {
   return result;
 }
 
-/**
- *
- *
- * @param {any} schema JSON validation schema
- * @param {any} req
- * @returns result with error if not valid input request or valid with true
- */
-async function validateSchemaAndMobile(schema, req) {
-  const mobileSAPattern = /((^9665[0345689])(\d{7}$))|((^96657([012678])(\d{6}$)))/;
-  const result = {
-    valid: false,
-    error: '',
-  };
-
-  // validation.
-  const errors = await validate(schema, req.body);
-  if (errors.length) {
-    result.error = { message: errors, status: 400 };
-    return result;
-  }
-
-  const isPhone = mobileSAPattern.test(req.body.mobile.toString());
-  if (!isPhone) {
-    result.error = { message: 'please enter a valid Saudi Arabia mobile number', status: 400 };
-    return result;
-  }
-  result.valid = true;
-  return result;
-}
-
 module.exports = {
   bcryptPassword,
   getUserByMobile,
@@ -230,5 +200,4 @@ module.exports = {
   RegisterUser,
   findUserByIdOrMobileAndDelete,
   verifyUser,
-  validateSchemaAndMobile,
 };
