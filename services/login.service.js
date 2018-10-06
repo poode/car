@@ -3,12 +3,13 @@ const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const randomString = require('randomatic');
 
-const { validate, validateSchemaAndMobile } = require('../util/helpers/validation');
+const { sms } = require('../util/sms/sendSMS');
 const LoginSchema = require('../api/v1/schema/login.json');
 const smsVerificationSchema = require('../api/v1/schema/smsVerificationSchema.json');
+const verificationResetPasswordSchema = require('../api/v1/schema/verificationResetPassword.json');
+const { validate, validateSchemaAndMobile } = require('../util/helpers/validation');
 const { user } = require('../config/db').db;
-const { sms } = require('../util/sms/sendSMS');
-
+const { bcryptPassword } = require('../util/helpers/helpers');
 /**
  *
  * @param {*} signOption the option needed to create the token
@@ -98,7 +99,46 @@ async function forgotAndSet(req) {
   return result;
 }
 
+async function resetPass(req) {
+  const message = { error: '' };
+
+  const errors = await validate(verificationResetPasswordSchema, req.body);
+  if (errors.length) {
+    message.error = { message: errors, status: 400 };
+    return message;
+  }
+  const userFound = await user.findOne({
+    where: { mobile: Number(req.body.mobile) },
+  });
+
+  if (!userFound) {
+    message.error = { message: `The mobile number ${req.body.mobile} is not in our databases`, status: 400 };
+    return message;
+  }
+
+  if (!userFound.resetPassword) {
+    message.error = { message: `The mobile number ${req.body.mobile} did not ask for resting password before`, status: 412 };
+    return message;
+  }
+
+  if (userFound.verification !== Number(req.body.verification)) {
+    message.error = { message: 'invalid verification number', status: 400 };
+    return message;
+  }
+
+  const hashedPassword = await bcryptPassword(req.body.newPassword);
+
+  await user.update({
+    verification: 0,
+    resetPassword: false,
+    password: hashedPassword,
+  }, { where: { mobile: Number(req.body.mobile) } });
+
+  return message;
+}
+
 module.exports = {
   signIn,
   forgotAndSet,
+  resetPass,
 };
