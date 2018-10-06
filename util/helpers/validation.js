@@ -72,8 +72,8 @@ async function validateSchemaAndMobile(schema, req) {
     return result;
   }
 
-  const isPhone = mobileSAPattern.test(req.body.mobile.toString());
-  if (!isPhone) {
+  const isValidKSANumber = mobileSAPattern.test(req.body.mobile.toString());
+  if (!isValidKSANumber) {
     result.error = { message: 'please enter a valid Saudi Arabia mobile number', status: 400 };
     return result;
   }
