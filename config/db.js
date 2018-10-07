@@ -16,6 +16,7 @@ const sequelize = new Sequelize(
     dialect: process.env.DB_TYPE,
     operatorsAliases: false,
     // logging: logger.debug,
+    timezone: process.env.TIMEZONE,
     pool: {
       max: 5,
       min: 0,
