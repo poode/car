@@ -49,3 +49,5 @@ DROP TABLE IF EXISTS `userRoles`;
 DROP TABLE IF EXISTS `LT_roleTypes`;
 
 DROP TABLE IF EXISTS `rolePermissions`;
+
+DROP TABLE IF EXISTS `wrokingTime`;
