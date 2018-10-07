@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('orders', {
     type: DataTypes.INTEGER(11),
     allowNull: false,
     references: {
-      model: 'users',
+      model: 'user',
       key: 'id',
     },
   },
@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('orders', {
     type: DataTypes.INTEGER(11),
     allowNull: false,
     references: {
-      model: 'LTCarTypes',
+      model: 'carTypes',
       key: 'id',
     },
   },
@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('orders', {
     type: DataTypes.INTEGER(11),
     allowNull: false,
     references: {
-      model: 'LTServiceTypes',
+      model: 'serviceTypes',
       key: 'id',
     },
   },
@@ -50,7 +50,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('orders', {
     type: DataTypes.INTEGER(11),
     allowNull: true,
     references: {
-      model: 'users',
+      model: 'user',
       key: 'id',
     },
   },
@@ -58,7 +58,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('orders', {
     type: DataTypes.INTEGER(11),
     allowNull: true,
     references: {
-      model: 'LTEndOrderReasonTypes',
+      model: 'endOrderReasonTypes',
       key: 'id',
     },
   },

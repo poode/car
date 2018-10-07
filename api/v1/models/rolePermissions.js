@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('rolePermissions', {
     type: DataTypes.INTEGER(11),
     allowNull: false,
     references: {
-      model: 'LTRoleTypes',
+      model: 'roleTypes',
       key: 'id',
     },
   },
@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('rolePermissions', {
     type: DataTypes.INTEGER(11),
     allowNull: false,
     references: {
-      model: 'LTPermissionTypes',
+      model: 'permissionTypes',
       key: 'id',
     },
   },

@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('employeeAttendance'
     type: DataTypes.INTEGER(11),
     allowNull: false,
     references: {
-      model: 'users',
+      model: 'user',
       key: 'id',
     },
   },
