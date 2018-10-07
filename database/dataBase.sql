@@ -127,6 +127,15 @@ CREATE TABLE `rolePermissions` (
 	PRIMARY KEY (`id`)
 );
 
+CREATE TABLE `workingTime` (
+	`id` INT NOT NULL AUTO_INCREMENT,
+	`startTime` TIME NOT NULL,
+	`EndTime` TIME NOT NULL,
+	`createdAt` DATETIME NOT NULL,
+	`updatedAt` DATETIME NOT NULL,
+	PRIMARY KEY (`id`)
+);
+
 ALTER TABLE `contactUs` ADD CONSTRAINT `contactUs_fk0` FOREIGN KEY (`contactUsReasonTypeId`) REFERENCES `LTContactUsReasonTypes`(`id`);
 
 ALTER TABLE `contactUs` ADD CONSTRAINT `contactUs_fk1` FOREIGN KEY (`userId`) REFERENCES `users`(`id`);
