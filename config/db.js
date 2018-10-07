@@ -15,7 +15,7 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     dialect: process.env.DB_TYPE,
     operatorsAliases: false,
-    // logging: logger.warn,
+    // logging: logger.debug,
     pool: {
       max: 5,
       min: 0,
@@ -52,8 +52,19 @@ Object.keys(db).forEach((modelName) => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+db.userRoles.belongsTo(db.user, { foreignKey: 'userId', targetKey: 'id', foreignKeyConstraint: true });
+db.userRoles.belongsTo(db.roleTypes, { foreignKey: 'roleTypeId', targetKey: 'id', foreignKeyConstraint: true });
+db.rolePermissions.belongsTo(db.roleTypes, { foreignKey: 'roleTypeId', targetKey: 'id', foreignKeyConstraint: true });
+db.rolePermissions.belongsTo(db.permissionTypes, { foreignKey: 'permissionId', targetKey: 'id', foreignKeyConstraint: true });
+db.employeeAttendance.belongsTo(db.user, { foreignKey: 'employeeId', targetKey: 'id', foreignKeyConstraint: true });
+db.evaluations.belongsTo(db.orders, { foreignKey: 'orderId', targetKey: 'id', foreignKeyConstraint: true });
 db.contactUs.belongsTo(db.user, { foreignKeyConstraint: true });
 db.contactUs.belongsTo(db.contactUsReason, { foreignKey: 'contactUsReasonTypeId', targetKey: 'id', foreignKeyConstraint: true });
+db.orders.belongsTo(db.user, { foreignKey: 'userId', targetKey: 'id', foreignKeyConstraint: true });
+db.orders.belongsTo(db.carTypes, { foreignKey: 'carTypeId', targetKey: 'id', foreignKeyConstraint: true });
+db.orders.belongsTo(db.serviceTypes, { foreignKey: 'serviceTypeId', targetKey: 'id', foreignKeyConstraint: true });
+db.orders.belongsTo(db.endOrderReasonTypes, { foreignKey: 'endOrderReasonTypeId', targetKey: 'id', foreignKeyConstraint: true });
+
 
 module.exports = {
   db,
