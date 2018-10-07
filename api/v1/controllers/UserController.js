@@ -83,7 +83,7 @@ class UserController {
     const { sent, error } = await sms(message);
 
     if (error) return next(error);
-    return res.json({ mobile: `sms sent to ${req.body.mobile}. sms ID: ${sent}` });
+    return res.json({ mobile: req.body.mobile, smsId: sent });
   }
 
   // this method is for admins to get verification numbers
