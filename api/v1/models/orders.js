@@ -36,6 +36,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('orders', {
   startTime: {
     type: DataTypes.DATE,
     allowNull: true,
+    defaultValue: DataTypes.NOW,
   },
   arrivingTime: {
     type: DataTypes.DATE,
