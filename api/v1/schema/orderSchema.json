@@ -1,0 +1,18 @@
+{
+    "type": "object",
+    "required": ["carTypeId", "serviceTypeId", "location"],
+    "properties": {
+      "carTypeId": {
+        "type": "string",
+        "maxLength": 255
+      },
+      "serviceTypeId": {
+        "type": "string",
+        "maxLength": 255
+      },
+      "location": {
+          "type":"string",
+          "maxLength": 500
+      }
+    }
+  }
