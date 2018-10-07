@@ -1,14 +1,13 @@
-module.exports = (sequelize, DataTypes) => sequelize.define('contactUsReason', {
+module.exports = (sequelize, DataTypes) => sequelize.define('endOrderReasonTypes', {
   id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
-  reasonType: {
+  endOrderReason: {
     type: DataTypes.STRING(255),
     allowNull: false,
-    unique: true,
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -19,5 +18,5 @@ module.exports = (sequelize, DataTypes) => sequelize.define('contactUsReason', {
     allowNull: true,
   },
 }, {
-  tableName: 'LTContactUsReasonTypes',
+  tableName: 'LTEndOrderReasonTypes',
 });

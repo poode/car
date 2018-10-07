@@ -1,11 +1,11 @@
-module.exports = (sequelize, DataTypes) => sequelize.define('contactUsReason', {
+module.exports = (sequelize, DataTypes) => sequelize.define('roleTypes', {
   id: {
     type: DataTypes.INTEGER(11),
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
-  reasonType: {
+  roleType: {
     type: DataTypes.STRING(255),
     allowNull: false,
     unique: true,
@@ -19,5 +19,5 @@ module.exports = (sequelize, DataTypes) => sequelize.define('contactUsReason', {
     allowNull: true,
   },
 }, {
-  tableName: 'LTContactUsReasonTypes',
+  tableName: 'LTRoleTypes',
 });
