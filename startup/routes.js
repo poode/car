@@ -1,8 +1,10 @@
 const compression = require('compression');
 
+const { getList } = require('../util/helpers/helpers');
 const users = require('../api/v1/routes/users');
 const login = require('../api/v1/routes/login');
 const contactUs = require('../api/v1/routes/contactUs');
+const orders = require('../api/v1/routes/orders');
 const notFound = require('../middleware/notFound');
 const errorHandler = require('../middleware/errorHandler');
 const logHandler = require('../middleware/logHandler');
@@ -26,7 +28,9 @@ module.exports = (app) => {
   app.use('/api/v1/users', users);
   app.use(isAuthorized);
   app.use(verificationMiddleware);
+  app.use('/api/v1/list', getList);
   app.use('/api/v1/contact-us', contactUs);
+  app.use('/api/v1/orders', orders);
   app.use(new RateLimiter(15, 100).limiter);
   app.use('*', notFound);
   app.use(errorHandler);
