@@ -46,7 +46,8 @@ async function setOrder(req, res) {
 
 async function getAllOrders() {
   const orderList = await orders.findAll();
-  const orderListWithRightTimeZone = orderList.map()
+  // @TODO fix timezone process.env.TIME +3 for KSA as time in database and application is UTC time
+  // const orderListWithRightTimeZone = orderList.map()
   return orderList;
 }
 
