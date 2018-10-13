@@ -44,6 +44,13 @@ async function setOrder(req, res) {
   return results;
 }
 
+async function getAllOrders() {
+  const orderList = await orders.findAll();
+  const orderListWithRightTimeZone = orderList.map()
+  return orderList;
+}
+
 module.exports = {
   setOrder,
+  getAllOrders,
 };
